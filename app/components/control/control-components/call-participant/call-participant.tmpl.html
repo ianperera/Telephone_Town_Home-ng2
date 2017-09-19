@@ -1,0 +1,187 @@
+<div class="container">
+    <div class="col-md-6">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Phone No:</label>
+                <div class="col-sm-5">
+                    <input class="form-control"  type="text" style="width: 100%;" required #phoneParticipant
+                           [textMask]="{mask: mask}" name="phone" *ngIf="!marked"
+                           [(ngModel)]="participantCall.phone">
+                    <input class="form-control"  type="text" style="width: 100%;" required #phoneParticipant
+                           name="phone" *ngIf="marked"
+                           [(ngModel)]="participantCall.phone">
+                </div>
+                <div class="col-sm-3">
+                    <label class="checkbox-inline">
+                        <input [(ngModel)]="theCheckbox" type="checkbox" (change)="toggleVisibilityofcheck($event)"
+                               [ngModelOptions]="{standalone: true}"
+                               title="check to allow dialing SIP numbers">allow SIP</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Participant Name:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" style="width: 100%"
+                           [(ngModel)]="participantCall.name" name="name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Participant Type:</label>
+                <div class="col-sm-8">
+                    <div class="radio" id="group1">
+                        <label><input type="radio" name="group1" value="HOST"
+                                      [(ngModel)]="participantCall.type"
+                                      [(ngModel)]="theRadio" (change)="toggleVisibilityofHost($event)"
+                                      [ngModelOptions]="{standalone: true}">Host</label>
+                        <label><input type="radio" name="group1" value="SCREENER"
+                                      [(ngModel)]="participantCall.type"
+                                      [(ngModel)]="theRadio" (change)="toggleVisibilityofradio($event)"
+                                      [ngModelOptions]="{standalone: true}">Screener</label>
+                        <label *ngIf="markedPIN" (change)="toggleVisibilityofradio($event)">
+                            <input type="checkbox" [(ngModel)]="participantCall.pin" name="group1"> create PIN
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Participant Type:</label>
+                <div class="col-sm-8">
+                    <div class="radio" id="group2">
+                        <label><input type="radio" name="group2" [value]="1"
+                                      [(ngModel)]="participantCall.mode" [ngModelOptions]="{standalone: true}">Prompt</label>
+                        <label><input type="radio" name="group2" [value]="2"
+                                      [(ngModel)]="participantCall.mode" [ngModelOptions]="{standalone: true}">Pre</label>
+                        <label><input type="radio" name="group2" [value]="3"
+                                      [(ngModel)]="participantCall.mode" [ngModelOptions]="{standalone: true}">Post</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Call status: </label>
+                <label class="col-sm-2 control-label">{{callStatus}}</label>
+                <div class="col-sm-6"></div>
+            </div>
+            <!--Buttons Control-->
+            <div class="form-group">
+                <label *ngIf="confData">Participant will be called using {{ confData.eventName }}</label><br>
+                <button type="button" class="btn btn-primary btn-sm" style="width: 100px;" (click)="callParticipant()">call</button>
+                <button type="button" class="btn btn-primary btn-sm" style="width: 100px;" (click)="clearParticipantData()">clear</button>
+                <button type="button" class="btn btn-primary btn-sm" style="width: 100px;"
+                        [disabled]="dialingout === false"
+                        data-toggle="modal" data-target="#hangupParticipant">hangup
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!--Participants Table-->
+    <div class="col-md-6">
+        <div class="bootstrap-table">
+            <div class="fixed-table-container">
+                <div class="fixed-table-header">
+                    <table></table>
+                </div>
+                <div class="fixed-table-body" style="height: 380px !important; overflow-x: scroll;">
+                    <table data-toggle="table" data-show-refresh="true"
+                           data-show-toggle="true" data-show-columns="true" data-search="true"
+                           data-select-item-name="toolbar1" data-pagination="true"
+                           data-sort-name="name" data-sort-order="desc" class="table table-hover" style="font-size: 12px;">
+                        <thead>
+                        <tr class="info">
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>PIN</th>
+                            <th>Phone #</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let pin of confData.pins; let i = index;" (click)="editUser(pin, i)"
+                            [class.userSelected]="selectedUser && pin.userId === selectedUser.userId"
+                            [class.callStatus1]="(pin.phoneNo && (pin.phoneNo === currentCallingPhone)) && (callStatus === 'alerting' || callStatus === 'connected')"
+                            [class.callStatus2]="(pin.phoneNo && (pin.phoneNo === currentCallingPhone)) && (callStatus === 'hold' || callStatus === 'live')"
+                            style="cursor: pointer;">
+                            <td>{{ pin.firstName }} {{ pin.lastName }}</td>
+                            <td>{{ roleLabeler(pin.role) }}</td>
+                            <td>{{ pin.pin }}</td>
+                            <td>{{ pin.phoneNo }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!--Other Dialing Methods-->
+        <div class="form-group">
+            <label>Calls in use: {{CallsInUse}}</label><br>
+            <label style="margin-right: 10px;">Participant Dial Control: </label>
+            <button type="button" class="btn btn-primary btn-sm" style="width: 100px;"
+                    *ngIf="btnStart" [disabled]="activeStartbtn"
+                    (click)="StartofParticipantDialOut()">start</button>
+            <button type="button" class="btn btn-primary btn-sm" style="width: 100px;"
+                    *ngIf="btnStop" (click)="StopofParticipantDialOut()">stop</button>
+            <button type="button" class="btn btn-primary btn-sm" style="width: 100px;"
+                    *ngIf="btnAbort" [disabled]="activeAbortbtn"
+                    data-toggle="modal" data-target="#AbortParticipant">abort
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- modal Hangup confirmation -->
+<div class="modal fade" id="hangupParticipant" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Please Confirm Participant Hangup</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Do you want to hangup participant ?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="hangupParticipant()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- modal Abort confirmation -->
+<div class="modal fade" id="AbortParticipant" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Please Confirm Dial Abort</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Aborting the dial will disconnect all dialed participants.</p>
+                                <p>Are you sure that you want to do abort?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="AbortofParticipantDialOut()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

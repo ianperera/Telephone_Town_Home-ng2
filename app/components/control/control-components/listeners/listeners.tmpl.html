@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="col-sm-9" style="min-height: 300px">
+        <div class="britechart js-line-chart-container line-chart-container card--chart" *ngIf="showGraph"></div>
+    </div>
+    <div class="col-sm-3">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label>Listening: {{ listenerCount }}</label><br>
+                <label>Inbound: {{ inboundCount }}</label><br>
+                <label>Outbound: {{ outboundCount }}</label><br>
+                <label>Online: {{ count }}</label><br><br>
+
+                <label>Hand Raised: {{ handRaisedCount }}</label><br>
+                <label>Screening: {{ screeningCount }}</label><br>
+                <label>Screened: {{ screenedCount }}</label><br>
+                <label>On Deck: {{ ondeckCount }}</label><br>
+                <label>Live: {{ liveCount }}</label><br>
+                <label>Peak: {{ peak }}</label><br>
+            </div>
+        </form>
+    </div>
+    </div>

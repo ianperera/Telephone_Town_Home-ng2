@@ -1,0 +1,83 @@
+<div class="container">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" >Phone#:</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" required #phoneno
+                       [textMask]="{mask: mask}"
+                       [(ngModel)]="phone.phone" name="phone" style="width: 300px;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Listener Name:</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" [(ngModel)]="phone.name" name="name" style="width: 300px;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Address City:</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" [(ngModel)]="phone.city" name="city" style="width: 300px;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">State:</label>
+            <div class="col-sm-1">
+                <input class="form-control" type="text" [(ngModel)]="phone.state" name="state">
+            </div>
+            <label class="col-sm-1 control-label">Zip:</label>
+            <div class="col-sm-1">
+                <input class="form-control" type="text" [(ngModel)]="phone.zip" name="zip">
+            </div>
+            <div class="col-sm-7">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Hand Raised:</label>
+            <div class="col-sm-10">
+                <input type="checkbox" [(ngModel)]="phone.raiseHand" name="raiseHand">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Non-interactive:</label>
+            <div class="col-sm-10">
+                <input type="checkbox" [(ngModel)]="phone.limited" name="playWelcome">
+            </div>
+        </div>
+        <div class="form-group">
+            <label *ngIf="confData">Listener will be called using BC: {{ confData.eventName }}</label><br>
+            <button *ngIf="btncall" type="button" class="btn btn-primary btn-sm" (click)="call()" style="width: 100px;">call</button>
+            <button *ngIf="btnhangup" type="button" class="btn btn-primary btn-sm" style="width: 100px;"
+                    data-toggle="modal" data-target="#hangupConfirmation">hang up</button>
+            <button type="button" class="btn btn-primary btn-sm" style="width: 100px;" (click)="clearData()">clear</button>
+        </div>
+    </form>
+</div>
+
+<!-- modal Hangup confirmation -->
+<div class="modal fade" id="hangupConfirmation" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Please Confirm Listener Hangup</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Do you want to hangup a listener {{phone.name}} - {{phone.phone}} ?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="hangup()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

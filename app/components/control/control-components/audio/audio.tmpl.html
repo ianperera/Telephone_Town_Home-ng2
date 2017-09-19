@@ -1,0 +1,65 @@
+<div id="collapse1" class="panel-collapse collapse">
+    <div class="panel-body">
+        <div style="text-align: right">
+            <a (click)="refreshAudio()">
+            <span  title="Refresh audio file list"><i class="fa fa-refresh" style="font-size:16px;"></i>
+                </span></a>
+        </div>
+        <ul class="todo-list">
+            <li class="todo-list-item" style="todo-list-item:hover; background-color: white;">
+                <div class="checkbox" style="margin-top: 10px">
+                    <p style="color: #3a3a3a">Now playing: {{ selectedAudio ? selectedAudio.name : 'N/A' }}</p>
+                </div><br><br>
+                <div class="checkbox" style="margin-top: 10px">
+                    <audio *ngIf="selectedAudio" controls autoplay
+                           (ended)="audioEnded($event)" (play)="audioStarted($event)"
+                           (volumechange)="audioVolumeChanged($event)" [volume]="defaultVolume" >
+                        <source [src]="selectedAudio.audioUrl" type="audio/mpeg">
+                    </audio>
+                    <button *ngIf="selectedAudio" type="button" class="btn btn-default" (click)="resetVolume()">Reset</button>
+                </div>
+                <br>
+                <div class="checkbox" style="margin-top: 10px">
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option0)"
+                            *ngIf="confData && confData.option0" title="{{ confData.option0.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option0.name }}</button>
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option1)"
+                            *ngIf="confData && confData.option1" title="{{ confData.option1.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option1.name }}</button>
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option2)"
+                            *ngIf="confData && confData.option2" title="{{ confData.option2.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option2.name }}</button>
+                </div><br>
+                <div class="checkbox" style="margin-top: 10px">
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option3)"
+                            *ngIf="confData && confData.option3" title="{{ confData.option3.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option3.name }}</button>
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option4)"
+                            *ngIf="confData && confData.option4" title="{{ confData.option4.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option4.name }}</button>
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option5)"
+                            *ngIf="confData && confData.option5" title="{{ confData.option5.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option5.name }}</button>
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option6)"
+                            *ngIf="confData && confData.option6" title="{{ confData.option6.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option6.name }}</button>
+                </div><br>
+                <div class="checkbox" style="margin-top: 10px">
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option7)"
+                            *ngIf="confData && confData.option7" title="{{ confData.option7.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option7.name }}</button>
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option8)"
+                            *ngIf="confData && confData.option8" title="{{ confData.option8.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option8.name }}</button>
+                    <button type="button" class="btn btn-default" (click)="playAudio(confData.option9)"
+                            *ngIf="confData && confData.option9" title="{{ confData.option9.name }}">
+                        <span class="glyphicon glyphicon-play"></span>{{ confData.option9.name }}</button>
+                </div>
+                <div class="pull-right action-buttons">
+
+                </div>
+
+            </li>
+        </ul>
+    </div>
+</div>

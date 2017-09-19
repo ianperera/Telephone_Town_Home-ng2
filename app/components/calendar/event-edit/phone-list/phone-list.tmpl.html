@@ -1,0 +1,153 @@
+<div class="panel panel-default">
+    <div class="panel-heading" style="color:#30a5ff">
+        {{ (phoneListObject.length==0?"Event has no Phone Lists": event.eventPhoneListSize + " Phone List Entries") }}
+    </div>
+    <div class="panel-body">
+        <p *ngIf="edited" class="text-danger">Select an item to delete.</p>
+
+        <div class="bootstrap-table">
+            <div class="fixed-table-container">
+                <div class="fixed-table-header">
+                    <table></table>
+                </div>
+
+                <div class="fixed-table-body">
+                    <div class="fixed-table-loading" style="top: 37px; display: none;">Loading,
+                        please wait…
+                    </div>
+
+                    <table data-toggle="table" data-url="tables/data1.json" data-show-refresh="true"
+                           data-show-toggle="true" data-show-columns="true" data-search="true"
+                           data-select-item-name="toolbar1" data-pagination="true"
+                           data-sort-name="name" data-sort-order="desc" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="">
+                                <div class="th-inner sortable">Name</div>
+                                <div class="fht-cell"></div>
+                            </th>
+                            <th style="">
+                                <div class="th-inner sortable">Time Zone</div>
+                                <div class="fht-cell"></div>
+                            </th>
+                            <th style="">
+                                <div class="th-inner sortable">Entries</div>
+                                <div class="fht-cell"></div>
+                            </th>
+                            <th style="">
+                                <div class="th-inner sortable">Type</div>
+                                <div class="fht-cell"></div>
+                            </th>
+                            <th style="">
+                                <div class="th-inner sortable">VIP</div>
+                                <div class="fht-cell"></div>
+                            </th>
+                            <th style="">
+                                <div class="th-inner sortable">Suppress</div>
+                                <div class="fht-cell"></div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let phoneList of this.phoneListObject; let i= index" (click)="setClickedRow(i)"
+                            [class.userSelected]="i == selectedRow"
+                            style="cursor: pointer;">
+                            <td>{{ phoneList.name }}</td>
+                            <td>{{ phoneList.timezone }}</td>
+                            <td>{{ phoneList.phoneEntryCount }}</td>
+                            <td>{{ phoneList.type }}</td>
+                            <td>{{ (phoneList.vip==false?"No":"Yes") }}</td>
+                            <td>{{ (phoneList.type=='READY'?"No":"Yes") }}</td>
+                        </tr>
+                        </tbody>
+                        <tbody *ngIf="!showPhoneList">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<div class="checkbox">
+
+    <div class="fileUpload btn btn-primary">
+        <span>upload</span>
+        <input type="file" class="upload" (change)="uploadPhoneList(1,$event)"/>
+    </div>&nbsp;
+    <div class="fileUpload btn btn-primary">
+        <span>upload VIP list</span>
+        <input type="file" class="upload" (change)="uploadPhoneList(2,$event)"/>
+    </div>&nbsp;
+    <div class="fileUpload btn btn-primary">
+        <span>upload suppression list</span>
+        <input type="file" class="upload" (change)="uploadPhoneList(3,$event)"/>
+    </div>&nbsp;
+    <button type="button" class="btn btn-primary" [disabled]="phoneListObject.length === 0" (click)="SelectedList($event)">delete</button>
+    <button type="button" style="display: none;" class="btn btn-primary" id="deletebtn"
+            data-toggle="modal" data-target="#deletePhoneListConfirmation" >d</button>
+
+    <button type="button" class="btn btn-primary" [disabled]="phoneListObject.length === 0"
+            data-toggle="modal" data-target="#deleteAllPhoneListConfirmation">delete all</button>
+
+    <label style="margin-left: 20px;"><input type="checkbox" name="scrubWireless"
+                                             [(ngModel)]="phoneListService.scrubWireless"> Scrub Wireless</label><br>
+</div>
+
+
+<!--modal phone list delete -->
+<div class="modal fade" id="deletePhoneListConfirmation" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Delete</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Are you sure you want to delete this phone list?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="deleteSelectedList($event)" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--modal phone list delete All -->
+<div class="modal fade" id="deleteAllPhoneListConfirmation" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Delete</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Are you sure you want to delete all phone lists? </p>
+                                <p>This will also cancel any ongoing phone list import tasks.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="deleteAllList()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

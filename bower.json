@@ -1,0 +1,17 @@
+{
+  "name": "tth",
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vaadin-split-layout": "^1.0.0"
+  }
+}

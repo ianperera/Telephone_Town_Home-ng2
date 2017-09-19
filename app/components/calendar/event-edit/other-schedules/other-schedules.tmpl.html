@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+    <div class="panel-heading" style="color:#30a5ff">Other schedules</div>
+    <div class="panel-body">
+        <form class="form-horizontal" action="" method="post">
+            <!-- Name input-->
+            <div class="form-group">
+                <div *ngFor="let conf of relatedConf;">
+                    <a href="javascript:void(0);" (click)="setConfTo(conf)">{{ conf.eventDate }} - {{ conf.eventLengthMin }} min.</a>
+                </div>
+                <div *ngIf="relatedConf.length === 0">There is no other schedule.</div>
+            </div>
+        </form>
+    </div>
+</div>

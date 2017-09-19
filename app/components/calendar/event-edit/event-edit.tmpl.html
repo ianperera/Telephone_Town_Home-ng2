@@ -1,0 +1,396 @@
+<!--Start of Side Bar-->
+
+<div id="sidebar-collapse" class="col-sm-2 col-lg-2 sidebar" style="cursor: pointer; cursor: hand;">
+    <form role="search">
+        <svg class="glyph stroked chevron left"><use xlink:href="#stroked-chevron-left"/></svg>
+        <a style="text-decoration: none" (click)="backToCalendarView()" class="active">Back to calendar</a>
+    </form>
+    <ul class="nav menu" >
+        <li><a class="tablink" (click)="setActiveTab(1)" [ngClass]="{'w3-blue' : isActiveTab(1)}">
+            <svg class="glyph stroked home">
+                <use xlink:href="#stroked-home"></use>
+            </svg>
+            Conference Name</a></li>
+        <li *ngIf="((editForm.eternal == false) && (editForm.hostOnly == false))"><a class="tablink" (click)="setActiveTab(2)" [ngClass]="{'w3-blue' : isActiveTab(2)}">
+            <svg class="glyph stroked clock">
+                <use xlink:href="#stroked-clock"></use>
+            </svg>
+            {{editForm.conferenceDate ? editForm.conferenceDate : 'Conference Date'}}</a></li>
+        <li *ngIf="((editForm.eternal == false) && (editForm.hostOnly == false))"><a class="tablink" (click)="setActiveTab(3)" [ngClass]="{'w3-blue' : isActiveTab(3)}">
+            <svg class="glyph stroked male user ">
+                <use xlink:href="#stroked-male-user"></use>
+            </svg>
+            {{ editForm.eventObject && editForm.eventObject.eventPhoneListSize ? editForm.eventObject.eventPhoneListSize + " Phone List Entries" : "Manage Phone Lists"}}</a></li>
+        <li><a class="tablink" (click)="setActiveTab(4)" [ngClass]="{'w3-blue' : isActiveTab(4)}">
+            <!--li><a href="javascript:void(0)" class="tablink" (click)="callidclick($event)"-->
+            <svg class="glyph stroked pencil">
+                <use xlink:href="#stroked-pencil"></use>
+            </svg>
+            Caller ID Management
+        </a></li>
+        <li><a class="tablink" (click)="setActiveTab('5')" [ngClass]="{'w3-blue' : isActiveTab(5)}">
+            <svg class="glyph stroked sound on">
+                <use xlink:href="#stroked-sound-on"></use>
+            </svg>
+            Role Management</a></li>
+        <li><a class="tablink" (click)="setActiveTab(6)" [ngClass]="{'w3-blue' : isActiveTab(6)}">
+            <svg class="glyph stroked two messages">
+                <use xlink:href="#stroked-two-messages"></use>
+            </svg>
+            Audio Management
+        </a></li>
+        <li *ngIf="((editForm.eternal == false) && (editForm.hostOnly == false))"><a class="tablink" (click)="setActiveTab(7)" [ngClass]="{'w3-blue' : isActiveTab(7)}">
+
+            <svg class="glyph stroked star">
+                <use xlink:href="#stroked-star"></use>
+            </svg>
+            Poll Setup</a></li>
+        <!--li><a href="javascript:void(0)" class="tablink" onclick="openCity(event, '8')">
+            <svg class="glyph stroked app-window">
+                <use xlink:href="#stroked-app-window"></use>
+            </svg>
+            Donations Setup</a></li-->
+        <li><a class="tablink" (click)="setActiveTab(8)" [ngClass]="{'w3-blue' : isActiveTab(8)}">
+            <svg class="glyph stroked notepad ">
+                <use xlink:href="#stroked-notepad"></use>
+            </svg>
+            Advanced Settings</a></li>
+        <li *ngIf="((editForm.eternal == false) && (editForm.hostOnly == false))"><a class="tablink" (click)="setActiveTab(9)" [ngClass]="{'w3-blue' : isActiveTab(9)}">
+            <svg class="glyph stroked upload">
+                <use xlink:href="#stroked-upload"></use>
+            </svg>
+            {{ otherScheduleCount > 0 ? otherScheduleCount : 'No'}} Other Schedule{{ otherScheduleCount != 1 ? 's' : ''}}</a></li>
+        <!--li role="presentation" class="divider"></li>
+        <li><a (click)="logout($event)">
+            <svg class="glyph stroked male-user">
+                <use xlink:href="#stroked-male-user"></use>
+            </svg>
+            Logout</a></li-->
+    </ul>
+</div>
+<!--End of Side Bar-->
+
+<!--Start of Conference Status-->
+<div class="alert alert-dismissible alert-danger" *ngIf="error_messages && error_messages.length">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <h5 style="color: darkred">The conference is incomplete.</h5>
+    <h5 *ngFor="let message of error_messages">
+      <span class="glyphicon glyphicon-warning-sign" style="color: darkred"></span>
+      <strong style="color: darkred">{{ message.message }}</strong>
+    </h5>
+</div>
+<!--End of Conference Status-->
+
+<div class="panel panel-default" [class.red-border]="isFieldsChanged">
+    <!--Start of Conference Name Form-->
+    <div id="1" class="w3-container" [class.validation]="editForm.conferenceName==0" [hidden]="!isActiveTab(1)">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="color:#30a5ff">
+                    <span *ngIf="editForm.conferenceName==0" class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span></span>
+                    Conference Name
+                </div>
+                <div class="panel-body">
+                    <span *ngIf="((editForm.eternal == true) && (editForm.hostOnly == true))" class="text-success">This is a simple conference. Some editing features are disabled.<br/></span>
+                    <form class="form-horizontal" action="" method="post"  onsubmit="return false" id="nameForm">
+                        <!-- Name input-->
+                        <!--div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span-->
+                            <!--label class="col-md-3 control-label" for="name">Conference Name:</label-->
+                            <div class="col-md-12" style="padding-left: 0px">
+                                <input type="text" class="form-control" id="conferenceName"
+                                       name="usrname" required
+                                       onkeyup="document.getElementById('inputButton').click();"
+                                       [(ngModel)]="editForm.conferenceName"
+                                       (keyup)="setChangedFields('conferenceName')">
+                            </div>
+                        <!--/div--><br>
+                        <div><br>
+                        <span *ngIf="editForm.conferenceName==0" class="text-danger">Conference name is required!</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--End of Conference Name Form-->
+
+
+    <!--Start of Conference Date Form-->
+    <div id="2" class="w3-container" [hidden]="!isActiveTab(2)">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="color:#30a5ff">{{editForm.conferenceDate}}</div>
+                <div class="panel-body">
+                    <form class="form-horizontal" action="" method="post" onsubmit="return false" id="scheduleForm">
+
+                        <!-- Start Time input-->
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" >Start Time:</label>
+<!--                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="conferencestartTimeHr" min="0" max="23" required
+                                       (keyup)="setChangedFields('conferencestartTimeHr')"
+                                       [(ngModel)]="editForm.conferencestartTimeHr"
+                                       [ngModelOptions]="{standalone: true}"
+                                       (change)="setChangedFields('conferencestartTimeHr')"
+                                       (click)="updateValue($event)"
+                                       (change)="updateValue($event)">
+                            </div>
+
+                            <div class="col-md-1">:</div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="conferencestartTimeMin" min="0" max="59" required
+                                       (keyup)="setChangedFields('conferencestartTimeMin')"
+                                       [(ngModel)]="editForm.conferencestartTimeMin"
+                                       [ngModelOptions]="{standalone: true}"
+                                       (change)="setChangedFields('conferencestartTimeMin')"
+                                       (click)="updateValue($event)"
+                                       (change)="updateValue($event)">
+                            </div>
+                        </div>
+
+                        <div class="form-group"> -->
+                          <div class="form-inline">
+                            <div class="input-group col-md-2">
+                                <span class="input-group-btn"><button class="btn btn-primary" (click)="decrementValue(false)">-</button></span>
+                                <input class="form-control" type="text" pattern="[0-9]*" id="hours"
+                                       value="{{ editForm.conferencestartTimeHr | number:'2.0-0' }}"
+                                       (input)="hoursChange($event)"
+                                       (keydown)="keyDown($event, false)"
+                                       required >
+                                <span class="input-group-btn"><button class="btn btn-primary" (click)="incrementValue(false)">+</button></span>
+                            </div>
+                            <div class="input-group col-md-1"><p class="form-control-static">:</p></div>
+                            <div class="input-group col-md-2">
+                                <span class="input-group-btn"><button class="btn btn-primary" (click)="decrementValue(true)">-</button></span>
+                                <input class="form-control" type="text" pattern="[0-9]*" id="minutes"
+                                       value="{{ this.editForm.conferencestartTimeMin| number:'2.0-0' }}"
+                                       (input)="minutesChange($event)"
+                                       (keydown)="keyDown($event, true)"
+                                       required >
+                                <span class="input-group-btn"><button class="btn btn-primary" (click)="incrementValue(true)">+</button></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <p style="color:red; margin-left: 200px">{{ getTimeWarning() }}</p>
+                        <div>
+
+                        </div>
+
+                        <!-- Time Zone-->
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Time Zone:</label>
+                            <div class="col-md-5">
+                                <select class="form-control input-sm" id="eventTimeZone"
+                                        (change)="timeZoneChange($event.target.value)" *ngIf="editForm.conferenceTimeZone">
+                                    <option [value]="timeZone.tzId"
+                                            [selected]="editForm.conferenceTimeZone.tzId === timeZone.tzId"
+                                            *ngFor="let timeZone of timeZones">{{timeZone.tzName}}
+                                        ({{timeZone.tzShortName}})
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Duration -->
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Duration:</label>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control" id="conferenceTimeDuration" min="30" max="240" required
+                                       (keyup)="setChangedFields('conferenceTimeDuration')"
+                                       [(ngModel)]="editForm.conferenceTimeDuration"
+                                       [ngModelOptions]="{standalone: true}"
+                                       (change)="setChangedFields('conferenceTimeDuration')">
+                            </div>
+                            <label class="col-md-1 control-label">Minutes</label>
+                        </div>
+                        <input type="submit" class="hide" id="inputButton">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End of Conference Time Form-->
+
+
+    <!--Start of Conference Manage Phone List Form-->
+    <div id="3" class="w3-container" [hidden]="!isActiveTab(3)">
+        <div class="col-md-12">
+            <app-event-phone-list
+                    [event]="editForm.eventObject"
+                    *ngIf="editForm.eventObject"
+                    (notify)="phoneListChanged($event)"
+                    (notify)="setChangedFields('eventObject')"
+                    (notifyChange)="setChangedFields('eventObject')"
+                    (click)="setChangedFields('eventObject')">
+            </app-event-phone-list>
+        </div>
+    </div>
+    <!--End of Conference Manage Phone List Form-->
+
+
+    <!--Start of Conference Call-ID Form -->
+    <div id="4" class="w3-container" [hidden]="!isActiveTab(4)">
+        <div class="col-md-12">
+            <app-event-call-id
+                    [event]="editForm.eventObject"
+                    *ngIf="editForm.eventObject"
+                    (change)="setChangedFields('eventObject')"
+                    (notify)="setChangedFields('eventObject')">
+            </app-event-call-id>
+        </div>
+    </div>
+    <!--End of Conference Call-ID Form-->
+
+
+    <!--Start of Conference Role Management Form -->
+    <div id="5" class="w3-container" [hidden]="!isActiveTab(5)">
+        <div class="col-md-12">
+            <app-event-role
+                    [event]="editForm.eventObject"
+                    *ngIf="editForm.eventObject"
+                    (change)="setChangedFields($event)">
+            </app-event-role>
+        </div>
+    </div>
+    <!--End of Conference Role Management Form-->
+
+
+    <!--Start of Conference Audio Management Form-->
+    <div id="6" class="w3-container" [hidden]="!isActiveTab(6)">
+        <div class="col-md-12">
+            <app-event-audio [event]="editForm.eventObject"
+                             *ngIf="editForm.eventObject"
+                             (change)="setChangedFields($event)">
+            </app-event-audio>
+        </div>
+    </div>
+    <!--End of Conference Audio Management Form-->
+
+
+    <!--Start of Conference Poll Setup Form -->
+    <div id="7" class="w3-container" [hidden]="!isActiveTab(7)">
+        <div class="col-md-12">
+            <app-event-poll
+                    [event]="editForm.eventObject"
+                    *ngIf="editForm.eventObject"
+                    (notifyChange)="setChangedFields('eventObject')"
+                    (change)="setChangedFields('eventObject')">
+            </app-event-poll>
+        </div>
+    </div>
+    <!--End of Conference Poll Setup Form-->
+
+
+    <!--Start of Conference Donation Setup Form >
+    <div id="8" class="w3-container city">
+        <div class="col-md-12">
+            <app-event-donation [event]="editForm.eventObject" *ngIf="editForm.eventObject"></app-event-donation>
+        </div>
+    </div-->
+    <!--End of Conference Donation Setup Form-->
+
+
+    <!--Start of Conference Advance Setting Form -->
+    <div id="8" class="w3-container" [hidden]="!isActiveTab(8)">
+        <div class="col-md-12">
+            <app-event-advance-setting
+                    [event]="editForm.eventObject"
+                    *ngIf="editForm.eventObject"
+                    (change)="setChangedFields('eventObject')">
+            </app-event-advance-setting>
+        </div>
+    </div>
+    <!--End of Conference Advance Setting Form-->
+
+    <!--Start of Other Schedules Form -->
+    <div id="9" class="w3-container" [hidden]="!isActiveTab(9)">
+        <div class="col-md-12">
+            <app-event-other-schedules
+                    [event]="editForm.eventObject"
+                    *ngIf="editForm.eventObject"
+                    (notifyCount)="setOtherScheduleCount($event)"
+                    (notify)="switchToConf($event)">
+
+            </app-event-other-schedules>
+        </div>
+    </div>
+    <!--End of Other Schedules Form-->
+
+    <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+        <!--Buttons Design Here-->
+        <div class="container-fluid">
+            <button type="button" class="btn btn-primary navbar-btn"
+                    [class.disabled]="editForm.conferenceName==0"
+                    [disabled]="editForm.conferenceName==0"
+                    [class.disabled]="!isFieldsChanged"
+                    [disabled]="!isFieldsChanged"
+                    (click)="updateConferenceData()">save
+            </button>
+            <button type="button" class="btn btn-primary navbar-btn"
+                    [class.disabled]="!isFieldsChanged"
+                    [disabled]="!isFieldsChanged"
+                    (click)="refreshEventData()">revert
+            </button>
+            |
+            <button type="button" class="btn btn-primary navbar-btn"
+                    [disabled]="((editForm.eternal == true) && (editForm.hostOnly == true))"
+                    (click)="duplicate()">duplicate
+            </button>
+            <button type="button" title="Delete Conference" class="btn btn-primary navbar-btn"
+                    *ngIf="isFutureEvent(event) || event.active" data-toggle="modal" data-target="#deleteConferenceConfirmation">delete</button>
+            <button type="button" title="View Reports" class="btn btn-primary"
+                    onclick="window.location.href='report'"
+                    *ngIf="(isPastEvent(event) && !event.active) || event.active">view report
+            </button>
+            |
+            <button type="button" title="Back to Calendar" class="btn btn-primary navbar-btn"
+                    (click)="backToCalendarView()">close
+            </button>
+            |
+            <button type="button" class="btn btn-primary navbar-btn"
+                    id="eventCopyDataBtn">copy conference data to clipboard
+            </button>
+            <button type="button" class="btn btn-primary navbar-btn"
+                    (click)="exportCalendar()">
+                <span class="glyphicon glyphicon-calendar"></span> export calendar
+            </button>
+            |
+            <span class="navbar-right navbar-text hidden-sm hidden-xs small" style="margin-right: 10px">
+                <span class="text-muted credit">Host Schedule: {{editForm.hostScheduleId}}</span>
+                <span class="text-muted credit hideOnSmall">| {{event.customerName}}</span>
+                <span class="text-muted credit hideOnMedium">| Conference Setup {{ version }}</span>
+            </span>
+        </div>
+    </nav>
+</div>
+
+<!--modal delete Conference-->
+<div class="modal fade" id="deleteConferenceConfirmation" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Delete</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Are you sure you want to delete this conference?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="deleteConference()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

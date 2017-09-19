@@ -1,0 +1,7 @@
+.userSelected {
+    background-color: lightskyblue;
+}
+
+tr.userSelected:hover {
+    background-color: lightskyblue;
+}

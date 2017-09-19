@@ -1,0 +1,210 @@
+<div class="panel-group" id="accordion" >
+    <div class="panel panel-default" style="cursor: pointer; cursor: hand;">
+        <div class="panel-heading">
+            <a data-toggle="collapse" data-parent="#accordion" href="#pollmanager" style="font-size: 12px;">Poll Manager</a>
+        </div>
+        <div id="pollmanager" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <div class="col-sm-4">
+                    <button class="btn btn-primary btn-sm"
+                            (click)="sendPollPrepareChatNotification()" style="width: 80px;"
+                            [disabled]="(closebtn === true || enabledPollbuttons || !selected_poll_stat_index)">
+                        prepare
+                    </button>
+                    <button *ngIf="openbtn === true" class="btn btn-primary btn-sm"
+                            (click)="onPollOpen()"
+                            [disabled]="enabledPollbuttons"
+                            style="width: 110px;">{{ poll_delay > 0 ? 'warn & open' : 'open' }}
+                    </button>
+                    <button *ngIf="closebtn === true" class="btn btn-primary btn-sm"
+                            [disabled]="enabledPollbuttons"
+                            (click)="onPollClose()" style="width: 80px;">Close</button>
+                    <label>Delay(s):</label>
+                    <input style="width: 50px;" type="number"
+                           [disabled]="enabledPollbuttons"
+                           [(ngModel)]="poll_delay" min="0">
+                </div>
+                <div class="col-sm-8">
+                    <div class="col-sm-8">
+                        <select class="form-control input-sm" *ngIf="polls_stats" style="width: 380px;"
+                                #poll_stat_sel
+                                (change)="onPollStatChange(poll_stat_sel.value)"
+                                [ngModel]="selected_poll_stat_index">
+                            <option *ngFor="let poll_stat of polls_stats;let i = index;" [value]="i">
+                                {{ poll_stat.questionName }} - {{ poll_stat.questionScript }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4"><span class="glyphicon glyphicon-refresh" style="color: green; font-size:18px;" (click)="onRefreshPollsStats()"></span></div>
+                </div>
+
+                <div class="col-sm-12"> <br>
+                    <div class="col-sm-7">
+                        <br>
+                        <p *ngIf="selected_poll_stat">Question: {{ selected_poll_stat.questionName }} - {{ selected_poll_stat.questionScript }} </p>
+                        <div class="fixed-table-body" style="height: 300px !important; width: 700px; overflow-x: scroll;">
+                            <table class="table" style="font-size: 10px;">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Answer</th>
+                                    <th>%</th>
+                                    <th>Count</th>
+                                </tr>
+                                </thead>
+                                <tbody *ngIf="selected_poll_stat">
+                                <tr *ngFor="let answer of selected_poll_stat.answers; let i = index;">
+                                    <td>{{ answer.digit }}</td>
+                                    <td>{{ answer.answer }}</td>
+                                    <td>{{ answer.total }}</td>
+                                    <td>{{ answer.count }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <br>
+                        <p>Total Votes: {{ vote_count }}</p>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="col-md-12" *ngIf="pieChartData && pieChartData.length > 0" style="height: 300px;">
+                            <canvas baseChart
+                                    [data]="pieChartData"
+                                    [labels]="pieChartLabels"
+                                    [chartType]="pieChartType"
+                                    [options]="pieOptions" style="height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default" style="cursor: pointer; cursor: hand;">
+        <div class="panel-heading">
+            <a data-toggle="collapse" data-parent="#accordion" href="#pollsetup" style="font-size: 12px;">Poll Setup</a>
+        </div>
+        <div id="pollsetup" class="panel-collapse collapse">
+            <div class="row" style="margin: 10px 0;">
+                <div class="col-md-10">
+                    <select class="form-control input-sm" *ngIf="polls"
+                            #poll_sel
+                            (change)="onPollChange(poll_sel.value)"
+                            [ngModel]="selected_poll_index">
+                        <option value="-1">new poll - fill question & save</option>
+                        <option *ngFor="let poll of polls;let i = index;" [value]="i">
+                            {{ poll.name }} - {{ poll.questionScript }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <span class="glyphicon glyphicon-refresh" (click)="onRefreshPolls()" style="color: green; font-size:18px;"></span>
+                </div>
+            </div>
+            <form #form="ngForm">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="questionName">Question Name:</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" required #questionName
+                                       (keyup)="poll_changed = true"
+                                       [(ngModel)]="selected_poll.name" id="questionName" name="questionName"
+                                       placeholder="Enter question name">
+                            </div>
+                            <br><br>
+                            <div>
+                                <span *ngIf="!selected_poll.name"
+                                      style="color: darkred; margin-left: 15px; font-size: 12px;">Question name is required!</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="questionScript">Question Script:</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" required
+                                       [(ngModel)]="selected_poll.questionScript" id="questionScript"
+                                       name="questionScript"
+                                       (keyup)="poll_changed = true"
+                                       placeholder="Enter question script">
+                            </div>
+                            <br><br>
+                            <div>
+							<span *ngIf="!selected_poll.questionScript"
+                                  style="color: darkred; margin-left: 15px; font-size: 12px;">Question Script is required!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="isDupAns" style="color: darkred; margin-left: 15px;">This poll has duplicate poll
+                        choices. That is not permitted.
+                    </div>
+                    <div *ngIf="isBlankAns" style="color: darkred; margin-left: 15px;">This poll has missing answers.
+                        That is not permitted.
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="form-group" >
+                            <label class="col-md-3 control-label">Question Responses:</label>
+                            <div class="col-md-9">
+                                <table class="table table-bordered" id="table-poll">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Answers</th>
+                                        <th><a (click)="onAddAnswer()" style="cursor: pointer; cursor: hand;">
+                                            <span style="color: green;" class="glyphicon glyphicon-plus-sign"></span>
+                                        </a></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody *ngIf="selected_poll">
+                                    <tr *ngFor="let item of selected_poll.answers; let i = index;">
+                                        <td>{{i+1}}</td>
+                                        <td><input type="text" [(ngModel)]="selected_poll.answers[i].answer"
+                                                   class="form-control"
+                                                   [ngModelOptions]="{standalone: true}" placeholder="" required
+                                                   (focus)="onAnswerIndexFocus(i)"
+                                                   (keyup)="validateAnswer();poll_changed = true;"/>
+                                        </td>
+                                        <td>
+                                            <span style="color: darkred; cursor: pointer; cursor: hand;" class="glyphicon glyphicon-minus-sign"
+                                                  (click)="onDeleteAnswer(i)" ></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--div class="row">
+                        <div class="checkbox text-right" id="addpoll">
+                            <button type="button" class="btn btn-default" (click)="onAddAnswer()"
+                                    [disabled]="(selected_poll && selected_poll.answers.length === 10) || isDupAns || isBlankAns">
+                                Add Answer
+                            </button>
+                            <button type="button" class="btn btn-primary" (click)="onDeleteAnswer()"
+                                    id="delete-poll123">Delete Answer
+                            </button>
+                        </div>
+                    </div-->
+                </div>
+
+            </form>
+            <div style="margin: 0 0 40px 20px;">Poll:
+                <button class="btn btn-primary btn-sm" type="button" (click)="onClearAllFields()"
+                        [disabled]="poll_changed">new
+                </button>
+                <!--button class="btn btn-primary" type="submit" (click)="onSavePoll()"
+                        [disabled]="!form.valid || selected_poll.answers.length === 0 || isDupAns || isBlankAns || selected_poll.id !== -1">new</button-->
+                <button class="btn btn-primary btn-sm" type="submit" (click)="onSavePoll()"
+                        [disabled]="!poll_changed">save
+                </button>
+                <button class="btn btn-primary btn-sm" type="button" (click)="onRevertPoll()"
+                        [disabled]="!poll_changed">revert
+                </button>
+                <button class="btn btn-primary btn-sm" type="button" (click)="onDeletePoll()"
+                        [disabled]="selected_poll.id === -1">del
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

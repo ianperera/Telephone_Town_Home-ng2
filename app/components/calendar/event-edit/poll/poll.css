@@ -1,0 +1,9 @@
+.modal-body .row {
+  margin-bottom: 10px;
+  margin-right: 10px; }
+
+.userSelected {
+  background-color: lightskyblue; }
+
+tr.userSelected:hover {
+  background-color: lightskyblue; }

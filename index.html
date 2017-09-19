@@ -1,0 +1,109 @@
+<html>
+<head>
+    <base href="/">
+    <title>Telephone Town Hall</title>
+    <meta charset="UTF-8">
+
+    <!-- set meta info -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 1. Load libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+    <link rel="stylesheet" type="text/css" href="/node_modules/primeng/resources/themes/omega/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/node_modules/primeng/resources/primeng.min.css"/>
+
+    <link rel="stylesheet" href="app/css/vendor.min.css">
+    <link rel="stylesheet" href="app/css/app.min.css">
+
+    <!--JS-->
+    <script src="assets/libs/lumino.glyphs.js"></script>
+    <script src="assets/libs/modernizr.custom.js"></script>
+
+    <!--Icons-->
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    <!--[if lt IE 9]>
+    <script src="assets/libs/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!--Load the Web Components polyfill for browsers that don’t have native support for the Web Components standards-->
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+    
+
+    <!--vaadin-components-->
+    <link rel="import" href="bower_components/vaadin-split-layout/vaadin-split-layout.html">
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <script src="node_modules/chart.js/src/chart.js"></script>
+    <script>
+        window.Polymer = {
+            dom: 'shadow'
+        };
+    </script>
+
+    <script>
+        document.addEventListener('WebComponentsReady', function() {
+            System.import('app').catch(function(err){ console.error(err); });
+        });
+    </script>
+    <style>
+        .modal-dialog {
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cal-cell-top {
+            position: relative;
+        }
+
+        .cal-day-add-button {
+            /*position: absolute;
+            top: 2px;
+            left: 2px;
+            cursor: pointer;*/
+        }
+
+        .cal-week-view > div:nth-child(n+2) {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<!-- 3. Display the application -->
+<body>
+<my-app>
+    <div class="container" style="margin-top: 300px">
+        <div class="jumbotron">
+            <h2 align="center">Telephone Town Hall</h2>
+            <!--p>The .active class animates the progress bar:</p-->
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="20" style="width:100%">
+                    Loading ...
+                </div>
+            </div>
+        </div>
+    </div>
+</my-app>
+
+<script src="app/js/vendor.min.js"></script>
+<script src="app/main.js"></script>
+
+<!--/.main-->
+<script>
+    !function ($) {
+        $(document).on("click", "ul.nav li.parent > a > span.icon", function () {
+            $(this).find('em:first').toggleClass("glyphicon-minus");
+        });
+        $(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+    }(window.jQuery);
+
+    $(window).on('resize', function () {
+        if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+    })
+    $(window).on('resize', function () {
+        if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<div class="alert alert-dismissible alert-danger" *ngIf="txtminutesLeft">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <h5 style="color: darkred">{{txtminutesLeft}}</h5>
+
+</div>
+<div class="panel-group" id="accordion" [class.green-border]="showBorder" style="margin: 0px 10px 10px 10px">
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="height: 40px;padding:0;">
+            <h6 class="panel-title" *ngIf="confData" style=" font-size: 13px; margin: 0px 10px; text-align: center;"><br>
+                    {{ confData.eventName }} - ({{ confData.conferenceId }})
+                <a data-toggle="collapse" class="pull-right" data-parent="#accordion" href="#collapse1"><span class="glyphicon glyphicon-plus"></span></a>
+                <a data-target="#refreshStreaming" data-toggle="modal" class="pull-right" ><span class="glyphicon glyphicon-refresh"></span></a>
+            </h6>
+        </div>
+        <div>
+            <div class="panel-body" style="padding: 5px;">
+                        <div class="col-sm-4">
+                            <p *ngIf="showiconOnair" style="color: red"><i class="fa fa-toggle-on" style="font-size:32px;"></i><br> ON AIR</p>
+                            <p *ngIf="showiconOffair"><i class="fa fa-toggle-off" style="font-size:32px;color:black;"></i><br> OFF AIR</p>
+                            <button *ngIf="showGolive" [disabled]="disableGoLive" style="width: 70px;" type="button" class="btn btn-danger btn-sm"  (click)="goliveEvent()">go live</button>
+                            <button *ngIf="showPause"  style="width: 70px;" type="button" class="btn btn-primary btn-sm" (click)="pauseEvent()" >pause</button>
+                            <button *ngIf="showResume" style="width: 70px;" type="button" class="btn btn-primary btn-sm" (click)="resumeEvent()">resume</button>
+                            <button *ngIf ="showEnd"   style="width: 70px;" type="button" class="btn btn-success btn-sm" data-target="#EndStreaming" data-toggle="modal">end</button>
+                            <button *ngIf ="showEndPoll"   style="width: 70px;" type="button" class="btn btn-success btn-sm" (click)="endPoll()"  >close poll</button>
+                        </div>
+                        <div class="col-sm-2">
+                            <br>
+                            <p *ngIf="showREC" style="color: darkred; font-size: 18px;"><strong>REC</strong></p>
+                            <p *ngIf="showStopped" style="color: darkred; font-size: 18px;"><strong>STOPPED</strong></p>
+                        </div>
+                        <div class="col-sm-6" align="right">
+                            <span *ngIf="showOnairstation" style="color: red"><i class="fa fa-wifi" style="font-size:32px;"></i></span>
+                            <span *ngIf="showOffairstation"><i class="fa fa-wifi" style="font-size:32px;"></i></span>
+                            <span *ngIf="showOnairstation" style="color: red"><i class="fa fa-sliders" style="font-size:32px"></i></span>
+                            <span *ngIf="showOffairstation"><i class="fa fa-sliders" style="font-size:32px"></i></span>
+                            <p style="color: #3a3a3a; margin-top:10px;" *ngIf="confData">{{ confData.aniMain }}</p>
+                            <p style="color: darkred">Live for: <span id="timer">00:00:00</span></p>
+                        </div>
+            </div>
+        </div>
+        <app-control-audio [confData]="confData" *ngIf="confData"></app-control-audio>
+    </div>
+</div>
+
+<!--modal End Event -->
+<div class="modal fade" id="EndStreaming" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Reset User Interface</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Stop conference? All listeners will be disconnected.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="endEvent()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--modal Refresh Event -->
+<div class="modal fade" id="refreshStreaming" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Reset User Interface</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Are you sure you want to reset your interface?</p>
+                                <p>This will trigger a reload of your view</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="refreshStreaming()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

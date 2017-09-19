@@ -1,0 +1,247 @@
+<style>
+    .fileUpload {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+
+    /* hack to prevent padding from going away when minifying */
+    .btn-group {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+</style>
+
+<span defaultOverlayTarget></span>
+<div class="container" style="margin-bottom: 100px;">
+    <div [ngSwitch]="switchView">
+        <!-- Edit Form Design -->
+        <div *ngSwitchCase="'editForm'" style="margin-left: 150px">
+            <app-event-edit (changeViewTo)="backToCalendarView($event)" (setConfTo)="switchToConf($event)"
+                            [event]="eventObject" *ngIf="eventObject"></app-event-edit>
+        </div>
+        <!--End of Edit Form Design-->
+
+
+        <div *ngSwitchCase="'calendarView'">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="btn-group">
+                        <div class="btn btn-primary" (click)="decrement()">
+                            Previous
+                        </div>
+                        <div class="btn btn-default" (click)="today()">
+                            Today
+                        </div>
+                        <div class="btn btn-primary" (click)="increment()">
+                            Next
+                        </div>
+                    </div>
+                    <div class="btn btn-primary" (click)="clearFilter()"><span class="glyphicon glyphicon-refresh"></span>
+                        Refresh
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                </div>
+                <div class="col-md-4">
+                    <div class="btn btn-primary" (click)="exportCalendar()"><span class="glyphicon glyphicon-calendar"></span>
+                        Export Calendar
+                    </div>
+                    <div class="btn-group">
+                        <div class="btn btn-primary" (click)="switchTo('day')"
+                             [class.active]="view === 'day'">Day
+                        </div>
+                        <div class="btn btn-primary" (click)="switchTo('month')"
+                             [class.active]="view === 'month'">Month
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="view === 'month'">
+                <div class="input-group" *ngIf="view === 'month'">
+
+                    <input type="text" class="form-control" placeholder="Filter here..." [(ngModel)]="filterValue" (keyup)="filterChange()">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary" (click)="clearFilter()">Clear</button>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <div [ngSwitch]="view">
+                <mwl-calendar-month-view
+                        *ngSwitchCase="'month'"
+                        [viewDate]="viewDate"
+                        [events]="events"
+                        [activeDayIsOpen]="activeDayIsOpen"
+                        (dayClicked)="dayClicked($event.day)"
+                        (eventClicked)="eventClicked($event)"
+                        [dayModifier]="addBadgeTotal">
+                </mwl-calendar-month-view>
+                <mwl-calendar-week-view
+                        *ngSwitchCase="'week'"
+                        [viewDate]="viewDate"
+                        [events]="events">
+                </mwl-calendar-week-view>
+                <!--
+                <mwl-calendar-day-view
+                  *ngSwitchCase="'day'"
+                  [viewDate]="viewDate"
+                  [events]="events">
+                </mwl-calendar-day-view>
+                -->
+
+
+                <div class="panel panel-blue" *ngSwitchCase="'day'" style="text-align:center;">
+
+
+                    <div class="panel-heading dark-overlay">
+
+                        <button type="button" class="btn btn-default btn-xs" style="float:left;" (click)="switchTo('month')"
+                                [class.active]="view === 'month'">Back
+                        </button>
+
+
+                        <svg class="glyph stroked clipboard-with-paper">
+                            <use xlink:href="#stroked-clipboard-with-paper"></use>
+                        </svg>
+                        Calendar Day View
+                    </div>
+
+                    <div class="panel-body" style="height:690px; overflow:auto;">
+                        <ul class="todo-list" style="height:690px; overflow:auto;">
+
+                            <li class="todo-list-item" style="padding: 0px 0px 0px 0px; margin: 10px 10px 10px 10px ">
+                                <table class="table table-striped" style=" font-size: 12px; line-height: 2; overflow:hidden; margin-bottom: 0px;"
+                                       *ngFor="let event of viewDateEvents">
+                                    <tbody>
+                                    <div class="pull-left action-buttons"  style="cursor: pointer; cursor: hand;"
+                                         (click)="switchView = 'editForm';showEditDataFromDayView(event)"
+                                         [class.active]="isEdit === 'true'" >
+                                        <tr>
+                                            <td align="right">Event Name:</td>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                            <td align="left"><strong>{{event.eventName}} ({{event.hostScheduleId}})</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">Customer:</td>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                            <td align="left">{{event.customerName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">Start Time:</td>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                            <td align="left">{{event.eventDate}} ({{event.eventTimeZone.tzShortName}})</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">Event Duration:</td>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                            <td align="left">{{event.eventLengthMin}} Minutes</td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">Active:</td>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                            <td align="left">{{event.activeFrom}} - {{event.activeUntil}}
+                                                ({{event.eventTimeZone.tzShortName}})
+                                            </td>
+                                        </tr>
+                                    </div>
+
+
+                                    <div  class="pull-right clearfix" *ngIf="event.active" style="padding-left: 5px; padding-right: 5px;">
+                                      <span class="text-success" ><i class="fa fa-microphone fa-2x"> </i> Conference is active</span>
+                                    </div>
+
+                                    <!--Btn Group on Day View-->
+                                    <div class="pull-right" style="cursor: pointer; cursor: hand;">
+                                        <a title="View Reports" class="btn-link btn-sm" onclick="window.location.href='report'"
+                                           *ngIf="(isPastEvent(event) && !event.active) || event.active || (event.onAirTime > 0 || event.offAirTime > 0)">
+                                            <i class="fa fa-area-chart fa-2x"> </i>
+                                        </a>
+                                        <a title="Edit Conference" class="btn-link btn-sm" style="cursor: pointer;"
+                                                (click)="switchView = 'editForm'; showEditDataFromDayView(event)"
+                                                [class.active]="isEdit === 'true'" >
+                                          <i class="fa fa-pencil-square-o fa-2x"> </i>
+                                        </a>
+                                        <a title="Duplicate Conference" class="btn-link btn-sm"
+                                                (click)="duplicateConference(event)">
+                                          <i class="fa fa-files-o fa-2x"> </i>
+                                        </a>
+                                        <a title="Delete Conference" class="btn-link btn-sm"
+                                                *ngIf="isFutureEvent(event) || (event.offAirTime == 0 && event.onAirTime == 0)" (click)="setEventToDelete(event)"
+                                                data-toggle="modal" data-target="#deleteConferenceConfirmation">
+                                          <i class="fa fa-trash-o fa-2x"> </i>
+                                        </a>
+                                    </div>
+
+                                    </tbody>
+                                    <p style="border-bottom: 3px solid #bce8f1;"></p>
+                                </table>
+                                <div *ngIf="viewDateEvents && viewDateEvents.length === 0" class="text-danger">
+                                    There are no conferences scheduled on this date.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button *ngIf="isTodayOrFutureDate(viewDate)" style="color:#ffffff;" type="button" class="btn btn-link"
+                            (click)="addButtonClicked(viewDate)" >
+                        <span class="cal-day-add-button">
+                            <i class="fa fa-fw fa-plus-circle"></i>
+                        </span> create a new conference
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav *ngIf="switchView == 'calendarView' && !hideNavigation" class="navbar navbar-inverse navbar-fixed-bottom" role="navigation" style="min-height: 35px">
+        <!--Buttons Design Here-->
+        <div class="container-fluid">
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 10px; margin-top: 5px;">
+              <li><span class="text-muted credit small">Conference Setup {{ version }}</span></li>
+            </ul>
+        </div>
+    </nav>
+
+</div>
+
+<!--modal delete Conference-->
+<div class="modal fade" id="deleteConferenceConfirmation" role="dialog">
+    <div class="modal-dialog ">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Delete</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>Are you sure you want to delete this conference?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="deleteConference(null)" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

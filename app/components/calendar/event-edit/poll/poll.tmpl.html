@@ -1,0 +1,250 @@
+<div class="panel panel-default">
+	<div class="panel-heading" style="color:#30a5ff">Polls:</div>
+	<div class="panel-body">
+		<div class="bootstrap-table">
+			<div class="fixed-table-container">
+				<div class="fixed-table-header">
+					<table></table>
+				</div>
+				<div class="fixed-table-body">
+					<div class="fixed-table-loading" style="top: 37px; display: none;">Loading,
+						please wait…
+					</div>
+					<table data-toggle="table" data-url="polls" data-show-refresh="true"
+						   data-show-toggle="true" data-show-columns="true" data-search="true"
+						   data-select-item-name="toolbar1" data-pagination="true"
+						   data-sort-name="name" data-sort-order="desc" class="table table-hover">
+						<thead>
+						<tr>
+							<th style="" colspan="3">
+								<div class="th-inner sortable">Question</div>
+								<div class="fht-cell"></div>
+							</th>
+							<th style="" colspan="1">
+								<div class="th-inner sortable">Answer count</div>
+								<div class="fht-cell"></div>
+							</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr *ngFor="let poll of pollService.pollQuestions;let i = index; trackBy:trackByIndex"
+							(click)="setClickedRow(i, poll)"
+							[class.userSelected]="i == selectedRow"
+							style="cursor: pointer;">
+							<td colspan="3">{{poll.name+"-"+poll.questionScript}}</td><td colspan="1">{{poll.answers.length}}</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<div class="checkbox">
+	<button type="button" data-toggle="modal" (click)="addShowMethod($event)" data-target="#myModalpoll" class="btn btn-primary">
+		new poll</button>
+	<button type="button" data-toggle="modal"
+			[ngClass]="{'btn-default': selectedRow === 100000, 'btn-primary': selectedRow !== 100000}"
+			[disabled]="pollService.pollQuestions.length === 0 || pollIndexSelected === 100000 "
+			(click)="editShowMethod($event)" data-target="#myModalEditPoll" class="btn btn-default">
+		edit poll</button>
+	<button type="button" class="btn btn-default"
+			[ngClass]="{'btn-default': selectedRow === 100000, 'btn-primary': selectedRow !== 100000}"
+			[disabled]="pollService.pollQuestions.length === 0 || pollIndexSelected === 100000 || disButton || pollService.pollQuestions.length > 10"
+			data-toggle="modal" data-target="#deletePollConfirmation">delete poll</button>
+	<label style="margin-left: 20px;">
+		<input type="checkbox" name="listenerShowPollResults"
+			   [(ngModel)]="pollService.listenerShowPollResults">show poll results in listener app
+	</label>
+
+</div>
+
+
+<!--Add modal poll -->
+<div class="modal fade" id="myModalpoll" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<form #form="ngForm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Add Poll</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="form-group">
+							<label class="col-md-3 control-label">Question Name:</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" required [(ngModel)]="questionPollNew.name" [ngModelOptions]="{standalone: true}" placeholder="Enter question name"/>
+							</div><br><br>
+							<div>
+							<span *ngIf="!questionPollNew.name" style="color: darkred; margin-left: 15px;">Question name is required!</span>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="isDupAns" style="color: darkred; margin-left: 15px;">This poll has duplicated poll choice. That is not permitted.</div>
+					<div *ngIf="isBlankAns" style="color: darkred; margin-left: 15px;">This poll has missing answers. That is not permitted.</div>
+					<br>
+					<div class="row">
+						<div class="form-group">
+							<label class="col-md-3 control-label">Question Script:</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" required [(ngModel)]="questionPollNew.questionScript"  [ngModelOptions]="{standalone: true}" placeholder="Enter question script"/>
+							</div><br><br>
+							<div>
+							<span *ngIf="!questionPollNew.questionScript" style="color: darkred; margin-left: 15px;">Question Script is required!</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<label class="col-md-3 control-label">Question Responses:</label>
+							<div class="col-md-9">
+								<table class="table table-bordered " id="table-poll">
+									<thead>
+									<tr>
+										<th>#</th>
+										<th>Answer</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr *ngFor="let item of questionPollNew.answers; let i = index; trackBy:trackByIndex">
+										<td> {{i+1}}</td>
+										<td> <input type="text" [(ngModel)]="questionPollNew.answers[i]"
+													class="form-control" [ngModelOptions]="{standalone: true}"
+													(focus)="answerIndexFocusNew(i)" (keyup)="validateAnswer('new')" /></td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="checkbox text-right" id="addpoll">
+							<button type="button" class="btn btn-default " (click)="AddanswerclickedNew()"
+									[disabled]="questionPollNew.answers.length === 10 || isDupAns || isBlankAns" >add answer</button>
+							<button type="button" class="btn btn-primary "  (click)="DeleteanswerclickedNew()"  id="delete-poll">delete answer</button>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-default"
+							[disabled]="!questionPollNew.name || !questionPollNew.questionScript || questionPollNew.answers.length === 0 || !questionPollNew.answers[0] || isDupAns || isBlankAns"
+							(click)="addDataOfPopupToObject($event,form.form.value)" data-dismiss="modal">Done</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!--Add modal poll end-->
+
+
+<!--Edit modal poll -->
+<div class="modal fade" id="myModalEditPoll" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<form #form="ngForm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Edit Poll</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="form-group">
+							<label class="col-md-3 control-label" for="questionName">Question Name:</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" required [(ngModel)]="questionPoll.name" name="questionName" placeholder="Enter question name">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group">
+							<label class="col-md-3 control-label" for="questionScript">Question Script:</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" required  [(ngModel)]="questionPoll.questionScript"  name="questionScript" placeholder="Enter question script">
+							</div><br><br>
+							<div>
+							<span *ngIf="!questionPoll.questionScript"
+								  (keyup)="setChangedFields('questionScript')" style="color: darkred; margin-left: 15px;">Question Script is required!</span>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="isDupAns" style="color: darkred; margin-left: 15px;">This poll has duplicated poll choice. That is not permitted.</div>
+					<div *ngIf="isBlankAns" style="color: darkred; margin-left: 15px;">This poll has missing answers. That is not permitted.</div>
+					<br>
+					<div class="row">
+						<div class="form-group">
+							<label class="col-md-3 control-label">Question Responses:</label>
+							<div class="col-md-9">
+								<table class="table table-bordered " id="table-poll">
+									<thead>
+									<tr>
+										<th>#</th>
+										<th>Answers</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr *ngFor="let item of questionPoll.answers; let i = index; trackBy:trackByIndex">
+										<td>{{i+1}}</td>
+										<td><input type="text" [(ngModel)]="questionPoll.answers[i]"   class="form-control"
+												   [ngModelOptions]="{standalone: true}"   placeholder="" required
+												   (focus)="answerIndexFocus(i)" (keyup)="validateAnswer('edit')" /></td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="checkbox text-right" id="addpoll">
+							<button type="button" class="btn btn-default " (click)="Addanswerclicked()"
+									[disabled]="questionPoll.answers.length === 10 || isDupAns || isBlankAns" >add answer</button>
+							<button type="button" class="btn btn-primary "  (click)="Deleteanswerclicked()" id="delete-poll123">delete answer</button>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+							[disabled]="!questionPoll.questionScript || questionPoll.answers.length === 0 || !questionPoll.answers[0] || !form.valid || isDupAns || isBlankAns"
+							(click)="saveEditedPoll($event,form.value)">Done</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!--Edit modal poll end-->
+
+
+<!--modal poll delete -->
+<div class="modal fade" id="deletePollConfirmation" role="dialog">
+	<div class="modal-dialog ">
+		<!-- Modal content-->
+		<form>
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Confirm Delete</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="form-group">
+							<div class="col-md-12">
+								<p>Are you sure you want to delete this poll?</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" (click)="deletePoll($event)" class="btn btn-primary" data-dismiss="modal">OK</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

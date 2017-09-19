@@ -1,0 +1,85 @@
+<html>
+<head>
+    <base href="/">
+    <title>Telephone Town Hall</title>
+    <meta charset="UTF-8">
+
+    <!-- Version: {{version}} -->
+
+    <!-- set meta info -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 1. Load libraries -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/vendor.min.css">
+
+    <!--Icons-->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <script language="JavaScript">
+      var APP_SIG = "357e7b33-23d6-4f44-9318-35149aeb2957";
+      var API_BASE_URL = "https://dev.shoutpoint.com";
+      var APP_NAME = "{{version}}";
+    </script>
+
+    <script src="js/vendor.min.js"></script>
+    <script src="main.js"></script>
+
+    <style>
+        .modal-dialog {
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cal-cell-top {
+            position: relative;
+        }
+
+        .cal-day-add-button {
+            /*position: absolute;
+            top: 2px;
+            left: 2px;
+            cursor: pointer;*/
+        }
+
+        .cal-week-view > div:nth-child(n+2) {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<!-- 3. Display the application -->
+<body>
+<my-app>
+    <div class="container" style="margin-top: 300px">
+        <div class="jumbotron">
+            <h2 align="center">Telephone Town Hall</h2>
+            <!--p>The .active class animates the progress bar:</p-->
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="20" style="width:100%">
+                    Loading ...
+                </div>
+            </div>
+        </div>
+    </div>
+</my-app>
+
+<!--/.main-->
+<script>
+    !function ($) {
+        $(document).on("click", "ul.nav li.parent > a > span.icon", function () {
+            $(this).find('em:first').toggleClass("glyphicon-minus");
+        });
+        $(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+    }(window.jQuery);
+
+    $(window).on('resize', function () {
+        if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+    })
+    $(window).on('resize', function () {
+        if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+    })
+</script>
+</body>
+</html>

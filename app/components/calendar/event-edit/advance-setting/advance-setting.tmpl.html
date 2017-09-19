@@ -1,0 +1,222 @@
+<div class="panel panel-default">
+    <div class="panel-heading" style="color:#30a5ff">Advanced Settings</div>
+    <div class="panel-body">
+        <form>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="sharedParentDNC" [(ngModel)]="advanceSettingService.formValues.sharedParentDNC">Share Parent DNC
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="announceHostJoined" [(ngModel)]="advanceSettingService.formValues.announceHostJoined">Announce Host Joined
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="announceHostLeft" [(ngModel)]="advanceSettingService.formValues.announceHostLeft">Announce Host Left
+                            </label>
+                        </div>
+                        <label>Host Announcement Type</label>
+                        <select class="form-control" [(ngModel)]="advanceSettingService.formValues.hostAnnounceTypeValue" name="hostAnnounceTypeValuee">
+                            <option *ngFor="let optionG of advanceSettingService.dropdowns.hostAnnounceType" [ngValue]="optionG.key">{{optionG.value}}</option>
+                        </select>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="recordAudio" [(ngModel)]="advanceSettingService.formValues.recordAudio">Record Audio
+                            </label>
+                        </div>
+                        <div class="panel panel-default">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion"
+                                   href="#greeting"><label>Custom Host Greetings</label></a>
+                            </h4>
+                            <div id="greeting" class="panel-collapse collapse">
+                                <h5>{{ audioObj.voxCustomHostGreeting.title }}</h5>
+                                <button type="button" class="btn btn-primary active"
+                                        (click)="showAudioManagement('voxCustomHostGreeting')">Edit
+                                </button>
+                                <button type="button" class="btn btn-primary"
+                                        [class.disabled]="!event.voxCustomHostGreeting"
+                                        [disabled]="!event.voxCustomHostGreeting"
+                                        (click)="deleteAudio('voxCustomHostGreeting')">Delete
+                                </button>
+                                <audio *ngIf="audioObj.voxCustomHostGreeting.audioUrl" controls>
+                                    <source [src]="audioObj.voxCustomHostGreeting.audioUrl" type="audio/mpeg">
+                                </audio>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion"
+                                   href="#restrictpin"><label>Restrict Pins</label></a>
+                            </h4>
+                            <div id="restrictpin" class="panel-collapse collapse">
+                                <h5>Restricted Pins</h5>
+                                <div>
+                                    <select class="form-control"
+                                            [(ngModel)]="selectedPinsLeft"
+                                            name="pinsLeft" multiple>
+                                        <option *ngFor="let pin of event.restrictedPins"
+                                                [ngValue]="pin">{{pin}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div style="text-align: center;margin: 5px 0;">
+                                    <button class="btn btn-default" [disabled]="selectedPinsRight.length === 0"
+                                            href="javascript:void(0);" (click)="shiftRightPins()">&lt;&lt;
+                                    </button>
+                                    <button class="btn btn-default" [disabled]="selectedPinsLeft.length === 0"
+                                            href="javascript:void(0);" (click)="shiftLeftPins()">&gt;&gt;
+                                    </button>
+                                </div>
+                                <div>
+                                    <select class="form-control"
+                                            [(ngModel)]="selectedPinsRight"
+                                            name="pinsRight" multiple>
+                                        <option *ngFor="let pin of pinsRight"
+                                                [ngValue]="pin.pin">
+                                            {{pin.firstName + ' ' + pin.lastName}}&nbsp;({{pin.pin}}): {{pin.role}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="whisperPrompts"
+                                       [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                       [(ngModel)]="advanceSettingService.formValues.whisperPrompts">Whisper Prompts
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="screeningRequired"
+                                       [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                       [(ngModel)]="advanceSettingService.formValues.screeningRequired">Screening Required
+                            </label>
+                        </div>
+                        <label>Join Digit</label>
+                        <select class="form-control"
+                                [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                [(ngModel)]="advanceSettingService.formValues.joinDigitValue" name="joinDigitValuee">
+                            <option value="">None</option>
+                            <option *ngFor="let optionG of advanceSettingService.dropdowns.joinDigitValues"
+                                    [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                    [ngValue]="optionG.key">{{optionG.value}}</option>
+                        </select>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="inboundHandRaised" [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                       [(ngModel)]="advanceSettingService.formValues.inboundHandRaised">Inbound Hand Raised
+                            </label>
+                        </div>
+                        <label>Raise Hand Digit</label>
+                        <select class="form-control" [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                [(ngModel)]="advanceSettingService.formValues.raiseHandValue" name="raiseHandValuess">
+                            <option value="">None</option>
+                            <option *ngFor="let optionG of advanceSettingService.dropdowns.raiseHandValues"
+                                    [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                    [ngValue]="optionG.key">{{optionG.value}}</option>
+                        </select>
+
+                        <label>Donate Digit</label>
+                        <select class="form-control" [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                [(ngModel)]="advanceSettingService.formValues.donateDigitValue" name="donateDigitValuess">
+                            <option value="">None</option>
+                            <option *ngFor="let optionG of advanceSettingService.dropdowns.donateDigitValues"
+                                    [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                    [ngValue]="optionG.key">{{optionG.value}}</option>
+                        </select>
+
+                        <label>Call Transfer Digit</label>
+                        <select class="form-control" [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                [(ngModel)]="advanceSettingService.formValues.callTransferDigitValue" name="callTransferDigitValues">
+                            <option value="">None</option>
+                            <option *ngFor="let optionG of advanceSettingService.dropdowns.callTransferDigitValues"
+                                    [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                    [ngValue]="optionG.key">{{optionG.value}}</option>
+                        </select>
+                        <div *ngIf="this.advanceSettingService.formValues.callTransferDigitValue">
+                            <label>Call Transfer Number</label>
+                            <input type="text" class="form-control" [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                   [(ngModel)]="advanceSettingService.formValues.callTransferNumber" name="callTransferNumberValues" />
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="useAudioTestimonial"
+                                       [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                       [(ngModel)]="advanceSettingService.formValues.useAudioTestimonial"/>Transfer to Voicemail
+                                <div class="form-group" *ngIf="advanceSettingService.formValues.useAudioTestimonial">
+                                    <h5>{{ audioObj.atLive.title }}</h5>
+                                    <button type="button" class="btn btn-primary active"
+                                            (click)="showAudioManagement('atLive')">Edit
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            [class.disabled]="!event.atLive"
+                                            [disabled]="!event.atLive"
+                                            (click)="deleteAudio('atLive')">Delete
+                                    </button>
+                                    <audio *ngIf="audioObj.atLive.audioUrl" controls>
+                                        <source [src]="audioObj.atLive.audioUrl" type="audio/mpeg">
+                                    </audio>
+                                    <h5>{{ audioObj.atBye.title }}</h5>
+                                    <button type="button" class="btn btn-primary active"
+                                            (click)="showAudioManagement('atBye')">Edit
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            [class.disabled]="!event.atBye"
+                                            [disabled]="!event.atBye"
+                                            (click)="deleteAudio('atBye')">Delete
+                                    </button>
+                                    <audio *ngIf="audioObj.atBye.audioUrl" controls>
+                                        <source [src]="audioObj.atBye.audioUrl" type="audio/mpeg">
+                                    </audio>
+                                    <h5>{{ audioObj.atInvalid.title }}</h5>
+                                    <button type="button" class="btn btn-primary active"
+                                            (click)="showAudioManagement('atInvalid')">Edit
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            [class.disabled]="!event.atInvalid"
+                                            [disabled]="!event.atInvalid"
+                                            (click)="deleteAudio('atInvalid')">Delete
+                                    </button>
+                                    <audio *ngIf="audioObj.atInvalid.audioUrl" controls>
+                                        <source [src]="audioObj.atInvalid.audioUrl" type="audio/mpeg">
+                                    </audio>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="outboundDialMax"
+                                       [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                       [(ngModel)]="advanceSettingService.formValues.outboundDialMax"/>Cap Outbound Dial
+                                <div class="form-group" *ngIf="advanceSettingService.formValues.outboundDialMax">
+                                    <label class="col-md-6 control-label"><b>Dial Max</b></label>
+                                    <input type="number" class="col-md-4 form-control"
+                                           [disabled]="((event.eternal === true) && (event.hostOnly === true))"
+                                           [(ngModel)]="event.outboundDialMax"
+                                           min="-1"
+                                           name="outboundDialMax" placeholder=""/>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

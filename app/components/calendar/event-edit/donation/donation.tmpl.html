@@ -1,0 +1,44 @@
+<div class="panel panel-default">
+    <div class="panel-heading" style="color:#30a5ff">Donations Setup</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            <form role="form">
+                <label>Paypal API</label>
+                <div class="radio">
+                    <label>
+                        <input type="radio" [(ngModel)]="calendarService.donationSetup.paypal3rdPartyEmail" value="Direct" [ngModelOptions]="{standalone: true}"
+                        >Direct
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" [(ngModel)]="calendarService.donationSetup.paypal3rdPartyEmail" value="3rd Party" [ngModelOptions]="{standalone: true}"
+                        >3rd Party
+                    </label>
+                </div>
+
+
+
+                <!-- Name input-->
+                <div class="form-group">
+                    <label class="col-md-6 control-label" for="name">Paypal Username:</label>
+                    <div class="col-md-6">
+                        <input type="text" [(ngModel)]="calendarService.donationSetup.paypalUsername" [ngModelOptions]="{standalone: true}" placeholder="Your username" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-6 control-label" for="name">Paypal Password:</label>
+                    <div class="col-md-6">
+                        <input type="text"[(ngModel)]="calendarService.donationSetup.paypalPassword" [ngModelOptions]="{standalone: true}" placeholder="Your password" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-6 control-label" for="name">Paypal key:</label>
+                    <div class="col-md-6">
+                        <input type="text" [(ngModel)]="calendarService.donationSetup.paypalApiKey"  [ngModelOptions]="{standalone: true}" placeholder="Your key" class="form-control">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

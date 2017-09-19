@@ -1,0 +1,94 @@
+<app-topnav></app-topnav>
+<br>
+<div class="col-md-3">
+<div class="panel-group" id="accordion">
+    <div class="panel panel-primary">
+        <div class="panel-heading dark-overlay">
+            <h4 class="panel-title">
+                NDS DEV 2010 - (165727)
+                <a data-toggle="collapse" class="pull-right" data-parent="#accordion" href="#collapse1"><span class="glyphicon glyphicon-plus"></span></a>
+                <a data-toggle="collapse" class="pull-right" data-parent="#accordion" href="#collapse1"><span class="glyphicon glyphicon-refresh"></span></a>
+            </h4>
+        </div>
+        <div>
+            <div class="panel-body">
+                <ul class="todo-list">
+                <li class="todo-list-item" >
+                    <div class="checkbox">
+                        <img src="../assets/img/on-air.png" width="70" height="70" style="margin-bottom: 10px;">
+                        <br>
+                        <button type="button" class="btn btn-danger">GO LIVE</button>
+                        <button type="button" class="btn btn-success">END</button>
+                    </div>
+                    <div class="pull-right action-buttons">
+                        <img src="../assets/img/onair_station-512.png" width="50" height="50">
+                        <img src="../assets/img/equalizer.gif" width="50" height="50">
+                        <br><br>
+                        <p style="color: #3a3a3a">(562) 583-7886</p>
+                        <br>
+                        <p style="color: darkred;">Live for: 00:00:00</p>
+                        <span class="glyphicon glyphicon-refresh"></span>
+                    </div>
+                </li>
+                </ul>
+            </div>
+        </div>
+        <div id="collapse1" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul class="todo-list">
+                    <li class="todo-list-item">
+                        <div class="checkbox" style="margin-top: 10px">
+                            <p style="color: #3a3a3a">Now playing: N/A</p>
+                        </div><br><br>
+                        <div class="checkbox" style="margin-top: 10px">
+                            <audio controls>
+                                Your browser does not support the audio element.
+                            </audio>
+                            <button type="submit" class="btn btn-default">Reset</button>
+                        </div>
+                        <div class="checkbox" style="margin-top: 10px">
+                            <button type="button" class="btn btn-default" title="Congressman's Greeting"><span class="glyphicon glyphicon-play"></span>Con...</button>
+                            <button type="button" class="btn btn-default" title="Congressman's Greeting"><span class="glyphicon glyphicon-play"></span>Work...</button>
+                            <button type="button" class="btn btn-default" title="Participant"><span class="glyphicon glyphicon-play"></span>Parti...</button>
+                            <button type="button" class="btn btn-default" title="Participant"><span class="glyphicon glyphicon-play"></span>Parti...</button>
+                        </div><br>
+                        <div class="checkbox" style="margin-top: 10px">
+                            <button type="button" class="btn btn-default" title="Congressman's Greeting"><span class="glyphicon glyphicon-play"></span>Con...</button>
+                            <button type="button" class="btn btn-default" title="Congressman's Greeting"><span class="glyphicon glyphicon-play"></span>Work...</button>
+                            <button type="button" class="btn btn-default" title="Participant"><span class="glyphicon glyphicon-play"></span>Parti...</button>
+                            <button type="button" class="btn btn-default" title="Participant"><span class="glyphicon glyphicon-play"></span>Parti...</button>
+                        </div><br>
+                        <div class="checkbox" style="margin-top: 10px">
+                            <button type="button" class="btn btn-default" title="Participant"><span class="glyphicon glyphicon-play"></span>Parti...</button>
+                            <button type="button" class="btn btn-default" title="Participant"><span class="glyphicon glyphicon-play"></span>Parti...</button>
+                        </div>
+                        <div class="pull-right action-buttons">
+
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div  style="margin-left: 10px;" class="col-md-8">
+<div class="container">
+    <div class="jumbotron" align="center">
+        <h1>Conference Event Streaming Demo</h1>
+        <p>Subscribes you to the active conference's conference events to watch them come in</p>
+        <p>
+
+        </p>
+    </div>
+
+    <br/><em><a (click)="unsubscribe()">unsubscribe to events</a></em>
+    <br/><em><a (click)="subscribe()">subscribe to events</a></em><br/>
+
+    <div class="jumbotron">
+        <li *ngFor="let item of eventList">{{ item | json }}</li>
+    </div>
+</div>
+</div>

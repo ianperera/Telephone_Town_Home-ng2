@@ -1,0 +1,179 @@
+<div class="container" style="margin: 0 0 0 0">
+    <div class="col-sm-12">
+        <label class="col-sm-1">Filter:</label>
+        <div class="col-sm-3">
+            <input type="text" #filterListener class="form-control input-sm"
+                   (keyup)="filterQuery($event)" [(ngModel)]="querySearch.filter"
+                   [ngModelOptions]="{standalone: true}"
+                   id="filterListener" name="filterListener">
+        </div>
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-primary btn-sm" style="width: 100px;"
+                    (click)="timestampQuery();listenerLookupForm();">query</button>
+            <button type="button" class="btn btn-primary btn-sm"
+                    (click)="clearData()" style="width: 100px;">clear</button>
+        </div>
+        <div class="col-sm-4">
+            <label>Has a question
+                <input type="checkbox" [(ngModel)]="querySearch.hasQuestion"
+                       [ngModelOptions]="{standalone: true}"
+                       (change)="timestampQuery();listenerLookupForm();"></label>
+            <label style="margin-left: 10px">Asked a question
+                <input type="checkbox" [(ngModel)]="querySearch.hasPrevious"
+                       [ngModelOptions]="{standalone: true}"
+                       (change)="timestampQuery();listenerLookupForm();"></label>
+        </div>
+    </div>
+
+    <div class="col-sm-12" style="margin-top: 10px;">
+        <label class="col-sm-4" id="group1">Type:
+            <label class="radio-inline"><input type="radio" name="group1"
+                                               [(ngModel)]="querySearch.callType"
+                                               [ngModelOptions]="{standalone: true}" [value]="0"
+                                               (change)="timestampQuery();listenerLookupForm();">all</label>
+            <label class="radio-inline"><input type="radio" name="group1"
+                                               [(ngModel)]="querySearch.callType"
+                                               [ngModelOptions]="{standalone: true}" [value]="2"
+                                               (change)="timestampQuery();listenerLookupForm();">outbound</label>
+            <label class="radio-inline"><input type="radio" name="group1"
+                                               [(ngModel)]="querySearch.callType"
+                                               [ngModelOptions]="{standalone: true}" [value]="1"
+                                               (change)="timestampQuery();listenerLookupForm();">inbound</label></label>
+            <label class="col-sm-4" id="group2">Status:
+            <label class="radio-inline"><input type="radio" name="group2"
+                                               [(ngModel)]="querySearch.state"
+                                               [ngModelOptions]="{standalone: true}" [value]="0"
+                                               (change)="timestampQuery();listenerLookupForm();">all</label>
+            <label class="radio-inline"><input type="radio" name="group2"
+                                               [(ngModel)]="querySearch.state"
+                                               [ngModelOptions]="{standalone: true}" [value]="1"
+                                               (change)="timestampQuery();listenerLookupForm();">connected</label>
+            <label class="radio-inline"><input type="radio" name="group2"
+                                               [(ngModel)]="querySearch.state"
+                                               [ngModelOptions]="{standalone: true}" [value]="32"
+                                               (change)="timestampQuery();listenerLookupForm();">disconnected</label></label>
+
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-success btn-sm"
+                    data-toggle="modal" data-target="#raiseHandData"
+                    [ngClass]="{'btn-default': !selectedUser, 'btn-primary': selectedUser}"
+                    [disabled]="!selectedUser">raise hand</button>
+
+            <button type="button" class="btn btn-success btn-sm"
+                    data-toggle="modal" data-target="#bringlive"
+                    [ngClass]="{'btn-default': !selectedUser, 'btn-primary': selectedUser}"
+                    [disabled]="!selectedUser">bring live</button>
+        </div>
+    </div>
+
+    <div class="col-sm-12" style="margin-top: 10px;">
+        <div class="table-responsive">
+            <table class="table table-bordered" style="font-size: 10px;height: 10px">
+                <thead>
+                <tr>
+                    <th>Phone#</th>
+                    <th>Name</th>
+                    <th>State</th>
+                    <th>Connected</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                    <th>Caller ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let query of queries | paginate: pagination; let i = index;" (click)="selectUser(query, i)"
+                    [class.userSelected]="selectedUser && query.localId === selectedUser.localId">
+                    <td>{{ query.phoneNo }}</td>
+                    <td>{{ query.name }}</td>
+                    <td>{{ query.addressState }}</td>
+                    <td>{{ query.callConnectTime/60 | number : '1.1-1'}}m</td>
+                    <td>{{ query.stateDesc }}</td>
+                    <td>{{ query.callTypeDesc }}</td>
+                    <td>({{query.callerId | slice:0:3}}) {{query.callerId |  slice:3:6}}-{{query.callerId | slice:6:10}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="fixed-table-pagination">
+        <div class="pull-left pagination-detail">
+            <pagination-controls (pageChange)="pageChanged($event)"
+                                 maxSize="1"
+                                 directionLinks="true"
+                                 autoHide="true"
+                                 previousLabel="Previous"
+                                 nextLabel="Next"
+                                 screenReaderPaginationLabel="Pagination"
+                                 screenReaderPageLabel="page"
+                                 screenReaderCurrentLabel="You're on page">
+            </pagination-controls>
+            <button style="margin-left: 10px" type="button" class="btn btn-default"
+                    [disabled]="!selectedUser"
+                    (click)="clearSelectedUser(); timestampQuery();">
+                <span class="glyphicon glyphicon-refresh" style="color: green;"></span>
+                refresh</button>
+        </div>
+    </div>
+    <div class="pull-right pagination">
+        <label *ngIf="timestamp">Timestamp: {{timestamp | date:'short'}}</label>
+    </div>
+</div>
+
+<!-- modal raiseHandData confirmation -->
+<div class="modal fade" id="raiseHandData" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Please Confirm Listener Status Change</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>You are going to force this listener to raise their hand.</p>
+                                <p>Are you certain that you wish to do this?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="raiseHandData()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- modal bringlive confirmation -->
+<div class="modal fade" id="bringlive" role="dialog">
+    <div class="modal-dialog " style="max-width:450px">
+        <!-- Modal content-->
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Please Confirm Listener Status Change</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <p>You are going to take this listener live.</p>
+                                <p>Are you certain that you wish to do this?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="bringlive()" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

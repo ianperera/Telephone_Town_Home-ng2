@@ -1,0 +1,83 @@
+<div class="panel-group" style="margin: 0px 10px 10px 10px;">
+   <div class="panel-heading"  style="height: 40px;padding:0;">
+       <div class="col-sm-12">
+        <div class="col-sm-4">
+            <h5 class="panel-title" style="font-size: 13px; margin: 15px 0px; font-weight: bold;">Chat</h5>
+        </div>
+        <div class="col-sm-8" align="right">
+            <div class="btn-group">
+                <button class="btn btn-primary btn-xs" style="font-size:6px;margin-top: 5px; height: 25px"
+                        (click)="fontSizeChange(-1)"><span class="glyphicon glyphicon-font"></span></button>
+                <button class="btn btn-primary btn-xs" style="font-size:10px;margin-top: 5px;height: 25px"
+                        (click)="DefaultfontSize()"><span class="glyphicon glyphicon-font"></span></button>
+                <button class="btn btn-primary btn-xs" style="font-size:14px;margin-top: 5px;height: 25px; margin-right: 5px;"
+                        (click)="fontSizeChange(1)"><span class="glyphicon glyphicon-font"></span></button>
+            </div>
+        </div>
+       </div>
+    </div>
+    <div #chatContainer class="panel-body" [ngStyle]="{'font-size': fontSize+'px' }">
+            <ul class="chat">
+                <li *ngFor="let chat of chat$ | async" class="clearfix"
+                    [ngClass]="chat.fromUserName === nickname ? 'right' : 'left'">
+                    <div>
+                        <span class="chat-img"
+                              [ngClass]="chat.fromUserName === nickname ? 'pull-right' : 'pull-left'">
+									<img [src]="chat.fromUserName === nickname ? 'http://placehold.it/50/FA6F57/fff&text=ME' : 'http://placehold.it/50/55C1E7/fff&text=U'"
+                                         alt="User Avatar" class="img-circle"/>
+								</span>
+                        <div class="chat-body clearfix">
+                            <div class="header" *ngIf="chat.fromUserName !== nickname">
+                                <strong class="primary-font">{{ chat.fromUserName }}</strong>
+                                <small class="pull-right text-muted">
+                                    <span class="glyphicon glyphicon-time"></span>{{ chat.time }}
+                                </small>
+                            </div>
+                            <div class="header" *ngIf="chat.fromUserName === nickname">
+                                <small class="text-muted">
+                                    <span class="glyphicon glyphicon-time"></span>{{ chat.time }}
+                                </small>
+                                <strong class="pull-right primary-font">{{nickname}}</strong>
+                            </div>
+                            <p style="white-space: pre-line;" [ngStyle]="{'color': (chat.priority === 1 || chat.priority === 2) ? 'red' : '' }">
+                                {{ chat.text }}
+                            </p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+    </div>
+        <div class="row" style="margin: 10px 10px 10px 10px;">
+            <div class="col-sm-12" style="margin-bottom: 5px; ">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Message ({{ charsLeft }}):</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" placeholder="Type your message here..."
+                               [(ngModel)]="message"
+                               [(ngModel)]="currentText"
+                               (keyup.enter)="sendMessage(0)"
+                               (keyup)="changed()" maxlength="160"
+                               style="width: 100%;"/></div>
+                </div>
+            </div>
+            <div class="col-sm-12" style="margin-bottom: 10px; ">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Name:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control input-sm" placeholder="Type your name here..."
+                               [(ngModel)]="nickname" />
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" (click)="sendMessage(0)"><span
+                                    class="glyphicon glyphicon-send"></span></button>
+                            <button type="button" class="btn btn-primary" (click)="sendMessage(1)"><span
+                                    class="glyphicon glyphicon-flag" style="color:yellow"></span></button>
+                            <button type="button" class="btn btn-primary" (click)="sendMessage(2)"><span
+                                    class="glyphicon glyphicon-flag" style="color:red"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

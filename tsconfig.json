@@ -1,0 +1,29 @@
+{
+  "version": "1.8.9",
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./app/temp/js",
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": true,
+    "noImplicitAny": false,
+    "allowUnreachableCode": false,
+    "preserveConstEnums": true,
+    "skipLibCheck": true,
+    "semicolon": [true, "always"]
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "app/temp",
+    "app/main.js"
+  ]
+}
+

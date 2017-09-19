@@ -1,0 +1,148 @@
+<div class="modal-header">
+    <button type="button" class="close" (click)="closeDialog('doNothing', null)">&times;</button>
+    <h4 class="modal-title">Audio Setup</h4>
+</div>
+<div class="modal-body">
+    <!--Menu tab in Modal-->
+    <div class="panel-group" id="accordion_audio_modal">
+        <div class="panel panel-default">
+            <div *ngIf="showLoadingImg" style="text-align: center;">
+                <p *ngIf="TTSMsg">{{TTSMsg}}</p>
+                <p *ngIf="deleteTTSMsg">{{deleteTTSMsg}}</p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        Loading...
+                    </div>
+                </div>
+            </div>
+            <div class="text-danger" *ngIf="errorMsg">{{ errorMsg }}</div>
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse"
+                       data-parent="#accordion_audio_modal"
+                       href="#collapse_tts_script">TTS Script Editing</a>
+                </h4>
+            </div>
+            <div id="collapse_tts_script"
+                 class="panel-collapse collapse" [class.in]="showTTSBox">
+                <div class="panel-body">
+                    <form autocomplete="off" (submit)="setTTS($event)">
+                            <p *ngIf="!ttsObj.name" style="color: darkred">Script name is required!</p>
+                            <p *ngIf="!ttsObj.script" style="color: darkred">Script text is required!</p>
+                        <div class="form-group">
+                            <input type="text" class="form-control" title="Title" [(ngModel)]="ttsObj.name"
+                                   required [ngModelOptions]="{standalone: true}"/>
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="5" title="Message" [(ngModel)]="ttsObj.script"
+                                      placeholder="Replace this text with the message to speak!"
+                                      required [ngModelOptions]="{standalone: true}"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" [disabled]="!ttsObj.script">Set</button>
+                        <button type="button" class="btn btn-default" (click)="clearTTS($event)">Clear</button>
+                        <button type="button" class="btn btn-danger" [class.disabled]="!ttsObj.update"
+                                [disabled]="!ttsObj.update"
+                                (click)="deleteTTS($event)">Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse"
+                       data-parent="#accordion_audio_modal"
+                       href="#collapse_upload_audio">Upload Audio</a>
+                </h4>
+            </div>
+            <div id="collapse_upload_audio" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <input style="display: none;" id="uploadAudioFileInput" type="file" class="upload"
+                           (change)="setAudioFile($event)"/>
+                    <button type="button" class="btn btn-default" (click)="uploadAudioFileTrigger()">Upload File
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse"
+                       data-parent="#accordion_audio_modal"
+                       href="#collapse_rmop">Record Message Over the Phone</a>
+                </h4>
+            </div>
+            <div id="collapse_rmop" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <button type="button" class="btn btn-default" (click)="startRecordAudio()"
+                            [class.disabled]="recordAudio"
+                            [disabled]="recordAudio">Record Audio
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="cancelRecordAudio()"
+                            [class.disabled]="!recordAudio"
+                            [disabled]="!recordAudio">Cancel
+                    </button>
+                    <div *ngIf="recordAudio">
+                        <br>
+                        <p *ngFor="let phone of recordAudio.ivrPhoneNos" style="color:darkred">
+                            To record your message over the phone, please dial: {{ phone }}</p>
+                        <p style="color:darkred">Please use the following PIN: {{ recordAudio.pin }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse"
+                       data-parent="#accordion_audio_modal"
+                       href="#collapse_lib">Library</a>
+                </h4>
+            </div>
+            <div id="collapse_lib" class="panel-collapse collapse" [class.in]="!showTTSBox">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Script</th>
+                        <th>Active</th>
+                    </tr>
+                    </thead>
+                    <tbody style="cursor: pointer; cursor: hand;">
+                    <tr *ngFor="let audio of audioList" (click)="setSelectedAudio(audio)"
+                        [class.userSelected]="selectedAudio && selectedAudio.id === audio.id">
+                        <td>{{audio.name}}</td>
+                        <td>{{audio.script}}</td>
+                        <td>{{audio.active ? 'Yes' : 'No'}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="panel-body">
+                    <button type="button" class="btn btn-primary" [class.disabled]="!selectedAudio || audioAlreadySet"
+                            [disabled]="!selectedAudio || audioAlreadySet" (click)="setEventAudio()">Set
+                    </button>
+                    <button type="button" class="btn btn-danger" [class.disabled]="!selectedAudio"
+                            [disabled]="!selectedAudio" (click)="removeAudio()">Delete
+                    </button>
+                    <button type="button" class="btn btn-default" (click)="closeDialog('doNothing', null)">Cancel
+                    </button>
+                </div>
+                <audio *ngIf="selectedAudioUrl && enableAudio" controls>
+                    <source [src]="selectedAudioUrl" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+    </div>
+    <!-- End Menu tab in Modal-->
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="closeDialog('doNothing', null)">Close</button>
+</div>

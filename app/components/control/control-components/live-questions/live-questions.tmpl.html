@@ -1,0 +1,76 @@
+<div class="panel panel-default" style="margin: 0 10px 10px 10px;">
+    <div class="panel-heading">Live Questions ({{ (questionUpdate$ | async)?.length ? (questionUpdate$ | async)?.length : 0  }})</div>
+    <div class="panel-body">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>Live caller list:</label>
+                <div style="border: 1px solid black; height: 25%; width: 100%; text-decoration:underline;">
+                    <ul *ngIf="(questionUpdate$ | async)?.length">
+                        <li *ngFor="let question of questionUpdate$ | async"
+                            [class.active]="question.id === (selectedQuestion$ | async)?.id"
+                            (click)="select(question.id)">{{ question.name? question.name : question.phoneNo }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>Question:</label>
+                <div style="border: 1px solid black; height: 10%; width: 100%; text-decoration:underline;">
+                    {{ selectedQuestion ? selectedQuestion.question : '' }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Notes:</label>
+                <div style="border: 1px solid black; height: 10%; width: 100%; text-decoration:underline;">
+                    {{ selectedQuestion ? selectedQuestion.screenerNotes : '' }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Name: {{ selectedQuestion ? selectedQuestion.name : '' }}</label>
+            </div>
+            <div class="form-group">
+                <label>Address:</label>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-sm"
+                    (click)="mute()"
+                    style="width: 80px">mute
+            </button>
+            <button type="button" class="btn btn-primary btn-sm"
+                    (click)="unmute()"
+                    style="width: 80px">unmute
+            </button>
+
+            <button type="button" class="btn btn-primary btn-sm"
+                    (click)="hold()"
+                    style="width: 80px">hold</button>
+            <button type="button" class="btn btn-primary btn-sm"
+                    (click)="unhold()"
+                    style="width: 80px">unhold</button>
+
+            <button type="button" class="btn btn-primary btn-sm"
+                    (click)="doneQuestion()"
+                    style="width: 80px">done</button>
+
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    (click)="hangup()"
+                    style="width: 80px">hangup</button>
+            <div class="form-group" style="margin-top: 10px">
+                <label>Audio Control:</label>
+                <div class="checkbox" style="margin-top: 20px">
+                    <input #volumeInput type="number" class="form-control" placehold="Volume" value="50"
+                           (keyup.enter)="volume({volume: volumeInput.value})">
+                    <span class="input-group-btn">
+                            <button type="button" class="btn btn-default"
+                                    (click)="volume({volume: 50})">Reset</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

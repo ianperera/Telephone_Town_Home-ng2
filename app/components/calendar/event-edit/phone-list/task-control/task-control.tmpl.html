@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{ title }} Task Control</h4>
+</div>
+<div class="panel mb-0">
+    <div class="panel-body">
+        <div>
+            <p class="text-danger">Progress: {{ message }}</p>
+            <div class="progress" *ngIf="showLoadingImg">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    Processing...
+                </div>
+            </div>
+            <p class="text-danger">Status: {{ messagestatus }}</p>
+            <p class="text-danger">State: {{ messagestate }}</p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th style="">
+                        <div class="th-inner">Task Id</div>
+                        <div class="fht-cell"></div>
+                    </th>
+                    <th style="">
+                        <div class="th-inner sortable">Task Control</div>
+                        <div class="fht-cell"></div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let taskId of taskIds; let i= index">
+                    <td class="col-sm-4">Task {{ taskId }}</td>
+                    <td class="col-sm-8">
+                        <button *ngIf="showPause"    class="btn btn-primary" (click)="pauseUpload(taskId)">Pause</button>
+                        <button *ngIf="showResume"   class="btn btn-primary" (click)="resumeUpload(taskId)">Resume</button>
+                        <button *ngIf="showDeferred" class="btn btn-primary" (click)="startUpload(taskId)">Start a deferred</button>
+                        <button *ngIf="showCancel"   class="btn btn-danger"  (click)="cancelUpload(taskId)">Cancel</button>
+                        <p      *ngIf="showComplete" class="text-danger">Uploaded successfully!</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" (click)="closeUpload()">Close</button>
+        </div>
+    </div>
+</div>

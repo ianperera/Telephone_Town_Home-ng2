@@ -1,0 +1,121 @@
+<div class="panel panel-default" style="cursor: pointer; cursor: hand;">
+    <div class="panel-heading" style="color:#30a5ff">Audio Management</div>
+    <div class="row">
+        <div class="panel-body">
+            <div class="col-md-3">
+                <h5 data-toggle="collapse" data-target="#Voicemail">Voicemail</h5>
+            </div>
+            <div class="col-md-9">
+                <div id="Voicemail" class="collapse">
+                    <h5>{{ audioObj.voxAnsweringMachine.title }}</h5>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary active"
+                            (click)="showAudioManagement('voxAnsweringMachine')">Edit
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            [class.disabled]="!event.voxAnsweringMachine"
+                            [disabled]="!event.voxAnsweringMachine"
+                            (click)="deleteAudio('voxAnsweringMachine')">Delete
+                    </button>
+                    </div>
+                    <div class="col-md-9">
+                    <audio *ngIf="audioObj.voxAnsweringMachine.audioUrl" style="margin-left: 30px" controls>
+                        <source [src]="audioObj.voxAnsweringMachine.audioUrl" type="audio/mpeg">
+                    </audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-3">
+                <h5 data-toggle="collapse" data-target="#LivePerson">Live Person</h5>
+                <p [ngClass]="{'error-msg': isXConference}" *ngIf="!event.voxLive || isXConference" style="color:red;">Live voice file is not set</p>
+            </div>
+            <div class="col-md-9" >
+                <div id="LivePerson" class="collapse">
+                    <h5 *ngIf="!isXConference">{{ audioObj.voxLive.title }}</h5>
+                    <h5 *ngIf="isXConference">Live Prompt Not Set!</h5>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary active"
+                            (click)="showAudioManagement('voxLive')">Edit
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            [class.disabled]="!event.voxLive || isXConference"
+                            [disabled]="!event.voxLive || isXConference"
+                            (click)="deleteAudio('voxLive')">Delete
+                    </button>
+                    </div>
+                    <div class="col-md-9">
+                    <audio *ngIf="audioObj.voxLive.audioUrl && !isXConference" style="margin-left: 30px" controls>
+                        <source [src]="audioObj.voxLive.audioUrl" type="audio/mpeg">
+                    </audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-3">
+                <h5 data-toggle="collapse" data-target="#Hold">Hold</h5>
+            </div>
+            <div class="col-md-9">
+                <div id="Hold" class="collapse">
+                    <h5>{{ audioObj.voxHoldMusic.title }}</h5>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary active"
+                            (click)="showAudioManagement('voxHoldMusic')">Edit
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            [class.disabled]="!event.voxHoldMusic"
+                            [disabled]="!event.voxHoldMusic"
+                            (click)="deleteAudio('voxHoldMusic')">Delete
+                    </button>
+                    </div>
+                    <div class="col-md-9">
+                    <audio *ngIf="audioObj.voxHoldMusic.audioUrl" style="margin-left: 30px" controls>
+                        <source [src]="audioObj.voxHoldMusic.audioUrl" type="audio/mpeg">
+                    </audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-3">
+                <h5 data-toggle="collapse" data-target="#FileLibrary">Conference Audio File Library</h5>
+            </div>
+            <div class="col-md-9">
+                <div id="FileLibrary" class="collapse">
+                    <div *ngFor="let option of optionList; let i= index;" class="panel-group"
+                         id="accordion_option{{ i }}">
+
+
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse"
+                               href="#collapse_option{{ i }}">- Option {{ i }} </a>
+                        </h4>
+
+                        <div id="collapse_option{{ i }}" class="panel-collapse collapse">
+
+                            <h5>{{ audioObj[option].title }}</h5>
+                            <div class="col-md-3">
+                            <button type="button" class="btn btn-primary active"
+                                    (click)="showAudioManagement(option)">Edit
+                            </button>
+                            <button type="button" class="btn btn-primary"
+                                    [class.disabled]="!event[option]"
+                                    [disabled]="!event[option]"
+                                    (click)="deleteAudio(option)">Delete
+                            </button>
+                            </div>
+                            <div class="col-md-9">
+                            <audio *ngIf="audioObj[option].audioUrl" style="margin-left: 30px" controls>
+                                <source [src]="audioObj[option].audioUrl" type="audio/mpeg">
+                            </audio>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.row -->
+</div>

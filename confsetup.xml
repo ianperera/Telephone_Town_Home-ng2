@@ -1,0 +1,14 @@
+<?xml version="1.0"  encoding="ISO-8859-1"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Call class="org.eclipse.jetty.util.log.Log" name="info"><Arg>Conference Setup App</Arg></Call>
+  <Set name="contextPath">/confsetup</Set>
+  <Set name="resourceBase"><SystemProperty name="jetty.home" default="."/>/webpages/confsetup/</Set>
+ <Get name="errorHandler">
+    <Call name="addErrorPage">
+      <Arg type="int">404</Arg>
+      <Arg type="String">/404.html</Arg>
+    </Call>
+  </Get>
+</Configure>

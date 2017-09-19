@@ -1,0 +1,143 @@
+<div class="panel panel-default">
+    <div class="panel-heading" style="color:#30a5ff; font-size: 16px">
+      Listeners Caller ID is {{ event.aniMain }}, inbound is
+      {{ event.parkInbound || event.parkInboundDisabled || !event.inboundListeners || !event.aniRouted ? 'not ' : ''}}enabled,
+      number is
+      {{ event.parkInbound || event.parkInboundDisabled || !event.inboundListeners || !event.aniRouted ? 'not ' : ''}}routed
+      {{ event.parkInbound || event.parkInboundDisabled ? ', number is parked' : ''}}
+    </div>
+    <div class="panel-body">
+        <div class="col-md-6">
+            <form>
+                <div class="form-group">
+                    <label>Primary Caller ID:</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" [(ngModel)]="event.aniMain"
+                             name="selected_called_id" />
+                      <div class="input-group-btn">
+                        <button type="button" class="form-control btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                          <li *ngFor="let called_id of called_ids" value="{{called_id}}"><a href="javascript:;" (click)="setCallerId(called_id)">{{called_id}}</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                </div>
+              <!--<div class="form-group">-->
+                <!--<label>Primary Caller ID:</label>-->
+                <!--<div class="input-group">-->
+                  <!--<input type="text" class="form-control" [(ngModel)]="event.aniMain"-->
+                         <!--name="selected_called_id" />-->
+                  <!--<div class="input-group-btn">-->
+                    <!--<select class="form-control btn" (change)="setCallerId($event)" >-->
+                      <!--<option value="" disabled selected hidden></option>-->
+                      <!--<option *ngFor="let called_id of called_ids" value="{{called_id}}" >-->
+                        <!--{{called_id}}-->
+                      <!--</option>-->
+                    <!--</select>-->
+                  <!--</div>-->
+                <!--</div>-->
+              <!--</div>-->
+                <!-- Trigger the modal with a button -->
+                <button type="button" class="btn btn-primary btn-xs" data-toggle="modal"
+                        data-target="#myModal" (click)="clearCallId()"><span class="glyphicon glyphicon-search"></span> Lookup Available Inbound
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close"
+                                        data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Lookup Inbound Number</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>Prefix, State, or Toll free must be specified</p>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="usr">Phone Number Prefix:</label>
+                                        <input type="text" class="form-control"
+                                               [(ngModel)]="prefixes" id="usr" name="prefixes"
+                                               value="{{prefixes}}" (change)="SetPrefixes()"
+                                               (keyup)="SetPrefixes()"/>
+
+
+                                    </div>
+                                    <label for="sel1">State:</label>
+                                    <select class="form-control" [(ngModel)]="selected_state"
+                                            name="selected_state" id="sel1" (change)="SetStates()">
+                                        <option *ngFor="let state of states" value="{{state.key}}">
+                                            {{state.value}}
+                                        </option>
+                                    </select>
+                                </form>
+                                <div class="checkbox">
+                                    <label><input type="checkbox"
+                                                  [(ngModel)]="tollFree" name="tollFree"
+                                                  value={{tollFree}} (click)="SetToll()">Toll Free</label>
+                                </div>
+                                <button type="button" class="btn btn-primary"
+                                        (click)="loadTableWithPrefix()">Search
+                                </button>
+                                <button type="button" class="btn btn-default" (click)="clearCallId()">Clear results
+                                </button>
+                                <div class="form-group">
+                                    <br>
+                                    <select class="form-control"
+                                            (change)="onLookupChange($event.target.value)" multiple>
+                                        <option *ngFor="let result of lookup_results"
+                                                value="{{result}}">
+                                            {{result}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="SetRouted()">
+                                    Set phone number
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                    Cancel
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <br>
+                    <label>Inbound Routing:</label>
+                    <div class="radio">
+                        <label (click)="updateRoutingVal('not_routed')">
+                            <input type="radio" name="inbound_routing" value="not_routed"
+                                   [(ngModel)]="inbound_routing"> not routed
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label (click)="updateRoutingVal('routed')">
+                            <input type="radio" name="inbound_routing" value="routed"
+                                   [(ngModel)]="inbound_routing"> routed
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label (click)="updateRoutingVal('parked')">
+                            <input type="radio" name="inbound_routing" value="parked"
+                                   [(ngModel)]="inbound_routing"> parked
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label (click)="updateRoutingVal('parked_disconnected')">
+                            <input type="radio" name="inbound_routing" value="parked_disconnected"
+                                   [(ngModel)]="inbound_routing"> parked, inbound disconnected
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
